@@ -350,7 +350,8 @@ async function loadFromGAS(silent){
   if(!GAS_URL)return;
   try{
     if(!silent)syncBadge('sync');
-    const res=await fetch(GAS_URL+'?t='+Date.now(),{method:'GET',mode:'cors'});
+    // mode指定なし：GASのリダイレクトに対応するため
+    const res=await fetch(GAS_URL+'?t='+Date.now());
     if(!res.ok)throw new Error('HTTP '+res.status);
     const json=await res.json();
     if(json.ok&&Array.isArray(json.data)){
@@ -655,8 +656,8 @@ function printDay(){render();doPrint([photoPageHTML(),oshPageHTML()])}
 function printOshOnly(){render();doPrint([oshPageHTML()])}
 function printMan(){render();doPrint([manPageHTML()])}
 buildKobEdit();buildMainEdit();setDate();render();
-// 起動時にクラウドからデータを取得して合成
-if(GAS_URL)loadFromGAS(true);
+// 起動時にクラウドからデータを取得して合成（画面表示後に実行）
+if(GAS_URL)setTimeout(()=>loadFromGAS(true),1000);
 </script>
 </body>
 </html>

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Café照">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>小鉢ランチ お品書き・盛り付けマニュアル | Café 照</title>
@@ -181,11 +183,19 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;padding:11px 22px;border-radius:24px;font-family:var(--serif);font-size:13px;letter-spacing:.06em;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:600}
 .note-warn{font-size:11px;color:var(--brown-l);line-height:1.7;background:#fdf6e8;border:1px solid #e8d4a8;border-radius:8px;padding:10px 12px;margin-top:8px}
 #print-host{display:none}
+/* ダークモード時も常にライト表示で固定（印刷時の真っ黒対策） */
+@media (prefers-color-scheme: dark) {
+  html, body { background: #eae5dc !important; color: #0d0805 !important; color-scheme: light !important; }
+  #print-host { background: #fff !important; color-scheme: light !important; }
+  #print-host * { color-scheme: light !important; }
+}
+
 @media print{
   @page{size:A4 portrait;margin:0}
-  html,body{background:#fff;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff!important;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-scheme:light!important;forced-color-adjust:none!important}
   .wrap{display:none!important}
-  #print-host{display:block!important}
+  #print-host{display:block!important;background:#fff!important;color-scheme:light!important}
+  #print-host *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-scheme:light!important;forced-color-adjust:none!important}
   #print-host .pg{width:210mm;height:297mm;page-break-after:always;overflow:hidden;position:relative}
   #print-host .pg:last-child{page-break-after:auto}
 }

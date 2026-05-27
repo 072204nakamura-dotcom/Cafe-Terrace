@@ -662,6 +662,7 @@ function renderHist(){
       +'<div class="hist-actions">'
       +'<button class="btn-sm" onclick="toggleHist('+r.id+')">'+(isOpen?'▲ 閉じる':'▼ メインを見る')+'</button>'
       +'<button class="btn-sm" style="border-color:var(--teal);color:var(--teal)" onclick="openEditModal('+r.id+')">✏️ 編集</button>'
+      +'<button class="btn-sm" style="border-color:var(--gold);color:var(--gold)" onclick="printHist('+r.id+')">🖨 印刷</button>'
       +'<button class="btn-sm" onclick="copyFrom('+r.id+')">📋 これをコピーして使う</button>'
       +'<button class="btn-sm danger" onclick="delRec('+r.id+')">削除</button>'
       +'</div></div>';
@@ -811,13 +812,109 @@ function copyShare(){
   function fb(x){const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
 }
 function doPrint(pages){
-  const host=document.getElementById('print-host');
-  host.innerHTML=pages.map(h=>'<div class="pg">'+h+'</div>').join('');
-  setTimeout(()=>{window.print();setTimeout(()=>{host.innerHTML=''},1200)},250);
+  // 既存のiframeがあれば削除
+  const oldF=document.getElementById('_print_frame');
+  if(oldF)oldF.remove();
+
+  // ページのCSSをすべて取得
+  const allStyles=Array.from(document.querySelectorAll('style,link[rel="stylesheet"]'))
+    .map(el=>el.outerHTML).join('\n');
+
+  // 印刷用のHTMLを組み立て
+  const printHTML='<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
+    +'<meta name="viewport" content="width=210mm, initial-scale=1.0">'
+    +allStyles
+    +'<style>'
+    +'@page{size:A4 portrait;margin:0}'
+    +'html,body{margin:0;padding:0;background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-scheme:light!important;forced-color-adjust:none!important}'
+    +'*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'.pg{width:210mm;height:297mm;page-break-after:always;overflow:hidden;position:relative;background:#fff}'
+    +'.pg:last-child{page-break-after:auto}'
+    +'</style>'
+    +'</head><body>'
+    +pages.map(h=>'<div class="pg">'+h+'</div>').join('')
+    +'<script>'
+    +'window.onload=function(){'
+    +'  setTimeout(function(){'
+    +'    window.focus();'
+    +'    window.print();'
+    +'  },800);'
+    +'};'
+    +'<\/script>'
+    +'</body></html>';
+
+  // iframeを作成して印刷HTMLを書き込み
+  const iframe=document.createElement('iframe');
+  iframe.id='_print_frame';
+  iframe.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;opacity:0;pointer-events:none';
+  document.body.appendChild(iframe);
+
+  // Blob URLで読み込み（iPhone Safari対応）
+  const blob=new Blob([printHTML],{type:'text/html;charset=utf-8'});
+  iframe.src=URL.createObjectURL(blob);
+
+  // 印刷後にiframeを削除（時間に余裕を持たせる）
+  setTimeout(()=>{iframe.remove()},10000);
 }
 function printDay(){render();doPrint([photoPageHTML(),oshPageHTML()])}
 function printOshOnly(){render();doPrint([oshPageHTML()])}
 function printMan(){render();doPrint([manPageHTML()])}
+
+/* ── 履歴データから印刷（写真ページ＋お品書きページ） ── */
+function printHist(id){
+  const r=ls(KOB_KEY,[]).find(x=>x.id===id);
+  if(!r){toast('⚠️ 履歴が見つかりません');return;}
+
+  // 写真：履歴に画像があれば使う、なければデフォルト
+  const histImg=r.zenImg||DEFAULT_IMG;
+
+  // 写真ページHTML
+  const photoHTML='<div class="pg-photo wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
+    +'<div class="hd hd-center">'
+    +'<div class="t-ttl-big">小鉢ランチ</div>'
+    +'<div class="t-price-row"><span class="t-price">¥1,600</span><span class="t-tax-ex">税抜 ¥1,455</span></div>'
+    +'</div>'
+    +'<div class="sec"><span>盛り付け見本</span></div>'
+    +'<div class="img-wrap"><img src="'+histImg+'"></div>'
+    +'<div class="set-bar">サラダ ／ 本日の小鉢 五種 ／ 味噌汁 ／ ごはん 付き</div>'
+    +'<div class="sec"><span>ごはんの量をお選びください</span></div>'
+    +'<div class="rice-row">'
+    +'<div class="rc"><div class="rc-n">少なめ</div></div>'
+    +'<div class="rc"><div class="rc-n">ふつう</div></div>'
+    +'<div class="rc"><div class="rc-n">大盛り</div><div class="rc-p">＋¥200</div></div>'
+    +'<div class="rc"><div class="rc-n">おかわり</div><div class="rc-p">＋¥200</div></div>'
+    +'</div>'
+    +'</div></div>';
+
+  // お品書きページHTML（履歴データから組み立て）
+  const histKob=r.kob||['','','','',''];
+  const kl=histKob.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(esc(v)||'　　　　　　')+'</div></div>').join('');
+
+  // メイン：履歴のmainsSnapがあればそれを使う、なければ現在のmainsを使う
+  const histMains=(r.mainsSnap&&r.mainsSnap.length)?r.mainsSnap:mains;
+  const ml=histMains.map(m=>{
+    const hasBr=m.desc&&m.desc.indexOf('\n')>=0;
+    if(hasBr){
+      return '<div class="mln expanded"><div class="mln-hd"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name||'')+'</span></div><div class="m-ds">'+esc(m.desc||'').replace(/\n/g,'<br>')+'</div></div>';
+    }
+    return '<div class="mln compact"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name||'')+'</span><span class="m-ds">'+esc(m.desc||'')+'</span></div>';
+  }).join('');
+
+  const note=r.note||'';
+  const noteH=note?'<div class="note">― '+esc(note)+' ―</div>':'';
+
+  const oshHTML='<div class="pg-osh wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
+    +'<div class="body" style="padding-top:1%">'
+    +'<div class="sec sec-main"><span>日替わり小鉢の献立</span></div>'
+    +'<div class="kob-list">'+kl+'</div>'
+    +noteH
+    +'<div class="sec"><span>お好きなメインをお選びください</span></div><div class="ml">'+ml+'</div>'
+    +'</div></div></div>';
+
+  doPrint([photoHTML, oshHTML]);
+  toast('🖨 '+(r.dateDisp||r.date)+' を印刷します');
+}
+
 buildKobEdit();buildMainEdit();setDate();render();
 // 起動時にクラウドからデータを取得して合成（画面表示後に実行）
 if(GAS_URL)setTimeout(()=>loadFromGAS(true),1000);

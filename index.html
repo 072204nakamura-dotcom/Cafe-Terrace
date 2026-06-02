@@ -816,8 +816,18 @@ function doPrint(pages){
   const allStyles=Array.from(document.querySelectorAll('style,link[rel="stylesheet"]'))
     .map(el=>el.outerHTML).join('\n');
 
+  // 各ページHTMLにインラインで明るい背景を焼き込む
+  // （iPhoneダークモードはCSSの@mediaを無視するため、style属性で最優先固定）
+  const LIGHT_BG='background:#faf4e4 !important;color-scheme:light only;';
+  const litPages=pages.map(h=>{
+    // wash要素のグラデーションをインライン単色背景で上書き
+    let fixed=h.replace(/class="(pg-photo|pg-osh|pg-man)([^"]*)"/g,
+      'class="$1$2" style="'+LIGHT_BG+'"');
+    return '<div class="pg" style="background:#faf4e4 !important;color-scheme:light only;">'+fixed+'</div>';
+  }).join('');
+
   // 印刷用のHTMLを組み立て（完全に独立したページ）
-  const printHTML='<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
+  const printHTML='<!DOCTYPE html><html lang="ja" style="color-scheme:light only"><head><meta charset="UTF-8">'
     +'<meta name="viewport" content="width=device-width, initial-scale=1.0">'
     +'<meta name="color-scheme" content="light only">'
     +'<meta name="supported-color-schemes" content="light">'
@@ -830,8 +840,11 @@ function doPrint(pages){
     +'-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;'
     +'color-scheme:light only!important;forced-color-adjust:none!important}'
     +'*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;'
-    +'forced-color-adjust:none!important}'
-    // 操作ボタンバー（画面表示時のみ・印刷時は消す）
+    +'forced-color-adjust:none!important;color-scheme:light only!important}'
+    // washのグラデーションを単色で打ち消し（最優先）
+    +'.wash{background:#faf4e4!important;background-image:none!important}'
+    +'.pg-photo,.pg-osh,.pg-man{background:#faf4e4!important;background-image:none!important}'
+    // 操作ボタンバー
     +'.action-bar{position:sticky;top:0;left:0;right:0;background:#2a5c3f;padding:14px 16px;'
     +'display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;'
     +'box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:1000}'
@@ -844,30 +857,28 @@ function doPrint(pages){
     +'.action-bar .close-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4)}'
     +'.hint{padding:14px 16px;background:#fff3cd;color:#7a5a00;font-family:"Shippori Mincho B1",serif;'
     +'font-size:12px;line-height:1.7;text-align:center;border-bottom:1px solid #e8d4a8}'
-    // ページ表示エリア
     +'.preview-area{padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}'
-    +'.pg{width:210mm;height:297mm;page-break-after:always;overflow:hidden;'
-    +'position:relative;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.15)}'
+    +'.pg{width:210mm;height:297mm;max-height:297mm;page-break-after:always;page-break-inside:avoid;break-inside:avoid;overflow:hidden;'
+    +'position:relative;background:#faf4e4;box-shadow:0 4px 20px rgba(0,0,0,0.15)}'
     +'.pg:last-child{page-break-after:auto}'
-    // スマホ表示：横スクロール避けるためA4を縮小
     +'@media (max-width:520px){.pg{transform:scale(0.43);transform-origin:top center;'
     +'margin-bottom:-170mm}}'
     // ダークモード完全打ち消し
     +'@media (prefers-color-scheme: dark){'
     +'  html,body{background:#e8e0d0!important;color:#000!important}'
-    +'  .wash{background:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%)!important}'
-    +'  .pg{background:#fff!important}'
+    +'  .wash,.pg-photo,.pg-osh,.pg-man{background:#faf4e4!important;background-image:none!important}'
+    +'  .pg{background:#faf4e4!important}'
     +'}'
     // 印刷時：操作バーとヒントを消し、ページのみ表示
     +'@media print{'
     +'  html,body{background:#fff!important;padding:0!important}'
     +'  .action-bar,.hint{display:none!important}'
     +'  .preview-area{padding:0!important;gap:0!important}'
-    +'  .pg{box-shadow:none!important;transform:none!important;margin:0!important}'
-    +'  .wash{background:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%)!important}'
+    +'  .pg{box-shadow:none!important;transform:none!important;margin:0!important;background:#faf4e4!important}'
+    +'  .wash,.pg-photo,.pg-osh,.pg-man{background:#faf4e4!important;background-image:none!important}'
     +'}'
     +'</style>'
-    +'</head><body>'
+    +'</head><body style="color-scheme:light only">'
     +'<div class="action-bar">'
     +'<span class="lbl">📄 '+pages.length+'ページ</span>'
     +'<button onclick="window.print()">🖨 印刷する</button>'
@@ -875,7 +886,7 @@ function doPrint(pages){
     +'</div>'
     +'<div class="hint">下に印刷プレビューが表示されています。「🖨 印刷する」ボタンを押すか、共有ボタン（□↑）→「プリント」で印刷できます。</div>'
     +'<div class="preview-area">'
-    +pages.map(h=>'<div class="pg">'+h+'</div>').join('')
+    +litPages
     +'</div>'
     +'</body></html>';
 

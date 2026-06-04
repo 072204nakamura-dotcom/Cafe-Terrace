@@ -10,6 +10,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>小鉢ランチ お品書き・盛り付けマニュアル | Café 照</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -40,10 +41,11 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .inp{flex:1;border:1px solid rgba(0,0,0,0.14);border-radius:7px;padding:9px 11px;font-family:var(--serif);font-size:14px;color:var(--ink);outline:none;-webkit-appearance:none;background:#fff}
 .inp:focus{border-color:var(--teal);background:var(--teal-l)}
 .dt-disp{flex:1;font-family:var(--serif);font-size:14px;color:var(--teal);letter-spacing:.08em}
-.kob-row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
-.kob-num{width:26px;height:26px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font-family:var(--serif);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.kob-row input{flex:1;border:1px solid rgba(0,0,0,0.14);border-radius:7px;padding:9px 11px;font-family:var(--serif);font-size:14px;color:var(--ink);outline:none;background:#fff}
-.kob-row input:focus{border-color:var(--teal);background:var(--teal-l)}
+.kob-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+.kob-num{width:26px;height:26px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font-family:var(--serif);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:6px}
+.kob-row input,.kob-row .kob-input{flex:1;border:1px solid rgba(0,0,0,0.14);border-radius:7px;padding:9px 11px;font-family:var(--serif);font-size:14px;color:var(--ink);outline:none;background:#fff}
+.kob-row .kob-input{resize:none;overflow:hidden;line-height:1.5;min-height:40px;width:100%;display:block}
+.kob-row input:focus,.kob-row .kob-input:focus{border-color:var(--teal);background:var(--teal-l)}
 .main-edit{border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:11px;margin-bottom:10px;background:#fcfaf5}
 .main-edit-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .main-edit-id{width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;font-family:var(--serif);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -127,6 +129,11 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .pg-osh .kl-t{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink);letter-spacing:.06em;line-height:1.35;flex:1;min-width:0;word-break:break-word}
 
 .pg-osh .sec-main{margin-top:0!important;font-size:17px!important;letter-spacing:.22em!important;margin-bottom:3%!important}
+
+/* 「お好きなメインをお選びください」を最も目立たせる強調見出し */
+.pg-osh .sec-pick{font-size:25px!important;font-weight:800!important;color:#fff!important;letter-spacing:.16em!important;margin-top:5%!important;margin-bottom:4.5%!important;padding:2.6% 4%!important;background:var(--teal)!important;border-radius:8px!important;box-shadow:0 3px 10px rgba(5,74,55,0.3)!important;text-align:center!important}
+.pg-osh .sec-pick span{background:transparent!important;padding:0!important;color:#fff!important}
+.pg-osh .sec-pick::after{display:none!important}
 
 .pg-osh .note{text-align:center;font-size:13px;color:var(--ink);letter-spacing:.06em;padding:2.4% 5%;background:rgba(255,255,255,0.55);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:4%;line-height:1.8;font-weight:600}
 
@@ -453,9 +460,14 @@ function buildKobEdit(){
   const w=document.getElementById('kob-edit');w.innerHTML='';
   for(let i=0;i<5;i++){
     const r=document.createElement('div');r.className='kob-row';
-    r.innerHTML='<div class="kob-num">'+(i+1)+'</div><input id="k'+i+'" placeholder="番号'+(i+1)+'の器の小鉢を入力" oninput="render()">';
+    r.innerHTML='<div class="kob-num">'+(i+1)+'</div><textarea id="k'+i+'" class="kob-input" placeholder="番号'+(i+1)+'の器の小鉢を入力（改行で行を分けられます）" rows="1" oninput="autoGrowKob(this);render()"></textarea>';
     w.appendChild(r);
   }
+}
+// 小鉢textareaの高さを内容に合わせて自動調整
+function autoGrowKob(el){
+  el.style.height='auto';
+  el.style.height=el.scrollHeight+'px';
 }
 function buildMainEdit(){
   const w=document.getElementById('main-edit');w.innerHTML='';
@@ -513,8 +525,8 @@ function clearPhoto(){
 }
 function onMainPhoto(ev,i){const f=ev.target.files[0];if(!f)return;compress(f,d=>{mains[i].img=d;buildMainEdit();render()})}
 function clearMainImg(i){if(!confirm(mains[i].id+' の写真を削除しますか？'))return;mains[i].img='';buildMainEdit();render()}
-function getKob(){return [0,1,2,3,4].map(i=>{const e=document.getElementById('k'+i);return e?e.value.trim():''})}
-function setKob(a){for(let i=0;i<5;i++){const e=document.getElementById('k'+i);if(e)e.value=(a&&a[i])||''}}
+function getKob(){return [0,1,2,3,4].map(i=>{const e=document.getElementById('k'+i);return e?e.value.replace(/^\n+|\n+$/g,'').trim():''})}
+function setKob(a){for(let i=0;i<5;i++){const e=document.getElementById('k'+i);if(e){e.value=(a&&a[i])||'';autoGrowKob(e);}}}
 let curDispDate='';
 function setDate(){
   const inp=document.getElementById('dt');const d=new Date();
@@ -551,13 +563,18 @@ function photoPageHTML(){
 /* ── 2枚目：お品書き（毎日差し替え・大きく濃く） ── */
 function oshPageHTML(){
   const kob=getKob();
-  const kl=kob.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(esc(v)||'　　　　　　')+'</div></div>').join('');
-  const ml=mains.map(m=>{
+  const kl=kob.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(v?esc(v).replace(/\n/g,'<br>'):'　　　　　　')+'</div></div>').join('');
+  // 料理名が入っているメインだけを対象にする（空のメインは非表示）
+  const activeMains=mains.filter(m=>m.name&&m.name.trim());
+  // メイン数に応じて行間（上下padding）を自動調整：少ないほど広げる
+  const n=activeMains.length;
+  const padV=n<=3?'4.5%':n===4?'3.6%':n===5?'2.8%':'2.0%';
+  const ml=activeMains.map(m=>{
     const hasBr=m.desc&&m.desc.indexOf('\n')>=0;
     if(hasBr){
-      return '<div class="mln expanded"><div class="mln-hd"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name)+'</span></div><div class="m-ds">'+esc(m.desc).replace(/\n/g,'<br>')+'</div></div>';
+      return '<div class="mln expanded" style="padding-top:'+padV+';padding-bottom:'+padV+'"><div class="mln-hd"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name)+'</span></div><div class="m-ds">'+esc(m.desc).replace(/\n/g,'<br>')+'</div></div>';
     }
-    return '<div class="mln compact"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name)+'</span><span class="m-ds">'+esc(m.desc)+'</span></div>';
+    return '<div class="mln compact" style="padding-top:'+padV+';padding-bottom:'+padV+'"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name)+'</span><span class="m-ds">'+esc(m.desc)+'</span></div>';
   }).join('');
   const note=document.getElementById('note').value.trim();
   const noteH=note?'<div class="note">― '+esc(note)+' ―</div>':'';
@@ -566,7 +583,7 @@ function oshPageHTML(){
     +'<div class="sec sec-main"><span>日替わり小鉢の献立</span></div>'
     +'<div class="kob-list">'+kl+'</div>'
     +noteH
-    +'<div class="sec"><span>お好きなメインをお選びください</span></div><div class="ml">'+ml+'</div>'
+    +'<div class="sec sec-pick"><span>お好きなメインをお選びください</span></div><div class="ml">'+ml+'</div>'
     +'</div></div></div>';
 }
 
@@ -811,94 +828,149 @@ function copyShare(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done).catch(()=>{fb(t);done()});else{fb(t);done()}
   function fb(x){const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
 }
-function doPrint(pages){
-  // ページのCSSをすべて取得
-  const allStyles=Array.from(document.querySelectorAll('style,link[rel="stylesheet"]'))
-    .map(el=>el.outerHTML).join('\n');
+async function doPrint(pages){
+  // 【重要】ボタン押下直後に空タブを開く（iPhoneのポップアップブロック対策）
+  const win=window.open('','_blank');
+  if(!win){
+    toast('⚠️ ポップアップを許可してください（設定→アプリ→Safari→ポップアップブロックをオフ）');
+    return;
+  }
+  // 開いたタブにローディング画面を表示
+  win.document.open();
+  win.document.write(loadingHTML());
+  win.document.close();
 
-  // 各ページHTMLにインラインで明るい背景を焼き込む
-  // （iPhoneダークモードはCSSの@mediaを無視するため、style属性で最優先固定）
-  const LIGHT_BG='background:#faf4e4 !important;color-scheme:light only;';
-  const litPages=pages.map(h=>{
-    // wash要素のグラデーションをインライン単色背景で上書き
-    let fixed=h.replace(/class="(pg-photo|pg-osh|pg-man)([^"]*)"/g,
-      'class="$1$2" style="'+LIGHT_BG+'"');
-    return '<div class="pg" style="background:#faf4e4 !important;color-scheme:light only;">'+fixed+'</div>';
-  }).join('');
+  // 画面外に一時レンダリング領域を作成（A4比率 794×1123px）
+  const stage=document.createElement('div');
+  stage.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#faf4e4;z-index:-1';
+  document.body.appendChild(stage);
 
-  // 印刷用のHTMLを組み立て（完全に独立したページ）
-  const printHTML='<!DOCTYPE html><html lang="ja" style="color-scheme:light only"><head><meta charset="UTF-8">'
+  const imgDataList=[];
+
+  try{
+    if(typeof html2canvas==='undefined'){
+      throw new Error('html2canvasが読み込まれていません');
+    }
+
+    for(let i=0;i<pages.length;i++){
+      const pageDiv=document.createElement('div');
+      pageDiv.style.cssText='width:794px;height:1123px;position:relative;background:#faf4e4;overflow:hidden;color-scheme:light only';
+      let fixed=pages[i].replace(/class="(pg-photo|pg-osh|pg-man)([^"]*)"/g,
+        'class="$1$2" style="background:#faf4e4 !important;width:794px;height:1123px"');
+      pageDiv.innerHTML=fixed;
+      stage.appendChild(pageDiv);
+
+      await new Promise(r=>setTimeout(r,400));
+
+      const canvas=await html2canvas(pageDiv,{
+        scale:2,
+        backgroundColor:'#faf4e4',
+        useCORS:true,
+        allowTaint:true,
+        logging:false,
+        width:794,
+        height:1123,
+        windowWidth:794,
+        windowHeight:1123,
+      });
+      imgDataList.push(canvas.toDataURL('image/png'));
+      stage.removeChild(pageDiv);
+    }
+  }catch(e){
+    stage.remove();
+    // 開いたタブにエラー表示
+    try{
+      win.document.open();
+      win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"></head>'
+        +'<body style="font-family:sans-serif;padding:40px;text-align:center;color:#c0392b">'
+        +'<h2>画像の生成に失敗しました</h2><p>'+e.message+'</p>'
+        +'<p>もう一度お試しください。</p>'
+        +'<button onclick="window.close()" style="padding:12px 24px;margin-top:20px;border:none;border-radius:8px;background:#2a5c3f;color:#fff;font-size:14px">閉じる</button>'
+        +'</body></html>');
+      win.document.close();
+    }catch(e2){}
+    toast('⚠️ 画像生成に失敗：'+e.message);
+    return;
+  }
+
+  stage.remove();
+
+  // 開いたタブに画像プレビューを流し込む
+  fillImagePreview(win, imgDataList);
+}
+
+// ローディング画面HTML
+function loadingHTML(){
+  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
     +'<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-    +'<meta name="color-scheme" content="light only">'
-    +'<meta name="supported-color-schemes" content="light">'
-    +'<title>印刷プレビュー | Café 照 小鉢ランチ</title>'
-    +allStyles
+    +'<title>準備中… | Café 照</title>'
     +'<style>'
+    +'*{margin:0;padding:0}'
+    +'body{background:#faf4e4;font-family:-apple-system,sans-serif;'
+    +'display:flex;flex-direction:column;align-items:center;justify-content:center;'
+    +'height:100vh;color:#2a5c3f}'
+    +'.spinner{width:48px;height:48px;border:4px solid #c8e6d0;border-top-color:#2a5c3f;'
+    +'border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}'
+    +'@keyframes spin{to{transform:rotate(360deg)}}'
+    +'.txt{font-size:15px;letter-spacing:.1em;font-weight:700}'
+    +'.sub{font-size:12px;color:#7a6e5e;margin-top:8px}'
+    +'</style></head><body>'
+    +'<div class="spinner"></div>'
+    +'<div class="txt">印刷用の画像を準備しています…</div>'
+    +'<div class="sub">数秒お待ちください</div>'
+    +'</body></html>';
+}
+
+// 開いたタブ(win)に画像プレビューを流し込む
+function fillImagePreview(win, imgList){
+  const imgsHTML=imgList.map((src,i)=>
+    '<div class="sheet"><img src="'+src+'" alt="ページ'+(i+1)+'"></div>'
+  ).join('');
+
+  const html='<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
+    +'<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+    +'<title>印刷プレビュー | Café 照 小鉢ランチ</title>'
+    +'<style>'
+    +'*{margin:0;padding:0;box-sizing:border-box}'
     +'@page{size:A4 portrait;margin:0}'
-    +':root{color-scheme:light only!important;forced-color-adjust:none!important}'
-    +'html,body{margin:0;padding:0;background:#e8e0d0!important;color:#000!important;'
-    +'-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;'
-    +'color-scheme:light only!important;forced-color-adjust:none!important}'
-    +'*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;'
-    +'forced-color-adjust:none!important;color-scheme:light only!important}'
-    // washのグラデーションを単色で打ち消し（最優先）
-    +'.wash{background:#faf4e4!important;background-image:none!important}'
-    +'.pg-photo,.pg-osh,.pg-man{background:#faf4e4!important;background-image:none!important}'
-    // 操作ボタンバー
-    +'.action-bar{position:sticky;top:0;left:0;right:0;background:#2a5c3f;padding:14px 16px;'
-    +'display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;'
-    +'box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:1000}'
-    +'.action-bar .lbl{color:#fff;font-family:"Shippori Mincho B1",serif;font-size:13px;'
-    +'letter-spacing:.08em;margin-right:6px;font-weight:500}'
-    +'.action-bar button{padding:11px 22px;border:none;border-radius:24px;font-family:"Shippori Mincho B1",serif;'
-    +'font-size:13px;font-weight:700;letter-spacing:.1em;cursor:pointer;'
-    +'background:#fff;color:#054a37;box-shadow:0 2px 8px rgba(0,0,0,0.15)}'
-    +'.action-bar button:active{opacity:.85;transform:scale(.97)}'
-    +'.action-bar .close-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4)}'
-    +'.hint{padding:14px 16px;background:#fff3cd;color:#7a5a00;font-family:"Shippori Mincho B1",serif;'
-    +'font-size:12px;line-height:1.7;text-align:center;border-bottom:1px solid #e8d4a8}'
-    +'.preview-area{padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}'
-    +'.pg{width:210mm;height:297mm;max-height:297mm;page-break-after:always;page-break-inside:avoid;break-inside:avoid;overflow:hidden;'
-    +'position:relative;background:#faf4e4;box-shadow:0 4px 20px rgba(0,0,0,0.15)}'
-    +'.pg:last-child{page-break-after:auto}'
-    +'@media (max-width:520px){.pg{transform:scale(0.43);transform-origin:top center;'
-    +'margin-bottom:-170mm}}'
-    // ダークモード完全打ち消し
-    +'@media (prefers-color-scheme: dark){'
-    +'  html,body{background:#e8e0d0!important;color:#000!important}'
-    +'  .wash,.pg-photo,.pg-osh,.pg-man{background:#faf4e4!important;background-image:none!important}'
-    +'  .pg{background:#faf4e4!important}'
-    +'}'
-    // 印刷時：操作バーとヒントを消し、ページのみ表示
+    +'body{background:#cfc8ba;font-family:-apple-system,sans-serif}'
+    +'.bar{position:sticky;top:0;background:#2a5c3f;padding:14px 16px;display:flex;'
+    +'gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;'
+    +'box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:10}'
+    +'.bar .lbl{color:#fff;font-size:13px;letter-spacing:.06em;margin-right:4px}'
+    +'.bar button{padding:11px 20px;border:none;border-radius:24px;font-size:13px;'
+    +'font-weight:700;letter-spacing:.08em;cursor:pointer;background:#fff;color:#054a37;'
+    +'box-shadow:0 2px 8px rgba(0,0,0,.15)}'
+    +'.bar button:active{opacity:.85;transform:scale(.97)}'
+    +'.bar .close-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)}'
+    +'.hint{padding:12px 16px;background:#fff3cd;color:#7a5a00;font-size:12px;'
+    +'line-height:1.7;text-align:center}'
+    +'.area{padding:16px;display:flex;flex-direction:column;align-items:center;gap:14px}'
+    +'.sheet{width:100%;max-width:794px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.18)}'
+    +'.sheet img{width:100%;height:auto;display:block}'
     +'@media print{'
-    +'  html,body{background:#fff!important;padding:0!important}'
-    +'  .action-bar,.hint{display:none!important}'
-    +'  .preview-area{padding:0!important;gap:0!important}'
-    +'  .pg{box-shadow:none!important;transform:none!important;margin:0!important;background:#faf4e4!important}'
-    +'  .wash,.pg-photo,.pg-osh,.pg-man{background:#faf4e4!important;background-image:none!important}'
+    +'  body{background:#fff}'
+    +'  .bar,.hint{display:none!important}'
+    +'  .area{padding:0;gap:0}'
+    +'  .sheet{max-width:none;width:100%;box-shadow:none;page-break-after:always}'
+    +'  .sheet:last-child{page-break-after:auto}'
+    +'  .sheet img{width:100%;height:auto}'
     +'}'
-    +'</style>'
-    +'</head><body style="color-scheme:light only">'
-    +'<div class="action-bar">'
-    +'<span class="lbl">📄 '+pages.length+'ページ</span>'
+    +'</style></head><body>'
+    +'<div class="bar">'
+    +'<span class="lbl">📄 '+imgList.length+'枚</span>'
     +'<button onclick="window.print()">🖨 印刷する</button>'
     +'<button class="close-btn" onclick="window.close()">✕ 閉じる</button>'
     +'</div>'
-    +'<div class="hint">下に印刷プレビューが表示されています。「🖨 印刷する」ボタンを押すか、共有ボタン（□↑）→「プリント」で印刷できます。</div>'
-    +'<div class="preview-area">'
-    +litPages
-    +'</div>'
+    +'<div class="hint">印刷：「🖨 印刷する」ボタン、または共有ボタン（□↑）→「プリント」<br>'
+    +'画像を保存：画像を長押し →「”写真”に追加」</div>'
+    +'<div class="area">'+imgsHTML+'</div>'
     +'</body></html>';
 
-  // 新しいタブで開く
-  const newWin=window.open('','_blank');
-  if(!newWin){
-    toast('⚠️ ポップアップがブロックされました。設定で許可してください');
-    return;
-  }
-  newWin.document.open();
-  newWin.document.write(printHTML);
-  newWin.document.close();
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  toast('✅ プレビューを表示しました');
 }
 function printDay(){render();doPrint([photoPageHTML(),oshPageHTML()])}
 function printOshOnly(){render();doPrint([oshPageHTML()])}
@@ -909,39 +981,23 @@ function printHist(id){
   const r=ls(KOB_KEY,[]).find(x=>x.id===id);
   if(!r){toast('⚠️ 履歴が見つかりません');return;}
 
-  // 写真：履歴に画像があれば使う、なければデフォルト
-  const histImg=r.zenImg||DEFAULT_IMG;
-
-  // 写真ページHTML
-  const photoHTML='<div class="pg-photo wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
-    +'<div class="hd hd-center">'
-    +'<div class="t-ttl-big">小鉢ランチ</div>'
-    +'<div class="t-price-row"><span class="t-price">¥1,600</span><span class="t-tax-ex">税抜 ¥1,455</span></div>'
-    +'</div>'
-    +'<div class="sec"><span>盛り付け見本</span></div>'
-    +'<div class="img-wrap"><img src="'+histImg+'"></div>'
-    +'<div class="set-bar">サラダ ／ 本日の小鉢 五種 ／ 味噌汁 ／ ごはん 付き</div>'
-    +'<div class="sec"><span>ごはんの量をお選びください</span></div>'
-    +'<div class="rice-row">'
-    +'<div class="rc"><div class="rc-n">少なめ</div></div>'
-    +'<div class="rc"><div class="rc-n">ふつう</div></div>'
-    +'<div class="rc"><div class="rc-n">大盛り</div><div class="rc-p">＋¥200</div></div>'
-    +'<div class="rc"><div class="rc-n">おかわり</div><div class="rc-p">＋¥200</div></div>'
-    +'</div>'
-    +'</div></div>';
-
   // お品書きページHTML（履歴データから組み立て）
   const histKob=r.kob||['','','','',''];
-  const kl=histKob.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(esc(v)||'　　　　　　')+'</div></div>').join('');
+  const kl=histKob.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(v?esc(v).replace(/\n/g,'<br>'):'　　　　　　')+'</div></div>').join('');
 
   // メイン：履歴のmainsSnapがあればそれを使う、なければ現在のmainsを使う
-  const histMains=(r.mainsSnap&&r.mainsSnap.length)?r.mainsSnap:mains;
+  const histMainsAll=(r.mainsSnap&&r.mainsSnap.length)?r.mainsSnap:mains;
+  // 料理名が入っているメインだけ表示（空は除外）
+  const histMains=histMainsAll.filter(m=>m.name&&m.name.trim());
+  // メイン数に応じて行間を自動調整
+  const n=histMains.length;
+  const padV=n<=3?'4.5%':n===4?'3.6%':n===5?'2.8%':'2.0%';
   const ml=histMains.map(m=>{
     const hasBr=m.desc&&m.desc.indexOf('\n')>=0;
     if(hasBr){
-      return '<div class="mln expanded"><div class="mln-hd"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name||'')+'</span></div><div class="m-ds">'+esc(m.desc||'').replace(/\n/g,'<br>')+'</div></div>';
+      return '<div class="mln expanded" style="padding-top:'+padV+';padding-bottom:'+padV+'"><div class="mln-hd"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name||'')+'</span></div><div class="m-ds">'+esc(m.desc||'').replace(/\n/g,'<br>')+'</div></div>';
     }
-    return '<div class="mln compact"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name||'')+'</span><span class="m-ds">'+esc(m.desc||'')+'</span></div>';
+    return '<div class="mln compact" style="padding-top:'+padV+';padding-bottom:'+padV+'"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name||'')+'</span><span class="m-ds">'+esc(m.desc||'')+'</span></div>';
   }).join('');
 
   const note=r.note||'';
@@ -952,11 +1008,11 @@ function printHist(id){
     +'<div class="sec sec-main"><span>日替わり小鉢の献立</span></div>'
     +'<div class="kob-list">'+kl+'</div>'
     +noteH
-    +'<div class="sec"><span>お好きなメインをお選びください</span></div><div class="ml">'+ml+'</div>'
+    +'<div class="sec sec-pick"><span>お好きなメインをお選びください</span></div><div class="ml">'+ml+'</div>'
     +'</div></div></div>';
 
-  doPrint([photoHTML, oshHTML]);
-  toast('🖨 '+(r.dateDisp||r.date)+' を印刷します');
+  doPrint([oshHTML]);
+  toast('🖨 '+(r.dateDisp||r.date)+' のお品書きを印刷します');
 }
 
 buildKobEdit();buildMainEdit();setDate();render();

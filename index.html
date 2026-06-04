@@ -145,14 +145,14 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .pg-osh .mln.compact{display:flex;align-items:baseline;gap:14px}
 .pg-osh .mln.compact .m-id{font-size:20px;font-weight:800;color:var(--teal-d);min-width:26px;flex-shrink:0}
 .pg-osh .mln.compact .m-nm{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:.04em;flex-shrink:0;white-space:nowrap}
-.pg-osh .mln.compact .m-ds{font-size:11.5px;color:var(--ink);flex:1;letter-spacing:.02em;text-align:right;line-height:1.5;font-weight:500;min-width:0}
+.pg-osh .mln.compact .m-ds{font-size:13.5px;color:var(--ink);flex:1;letter-spacing:.02em;text-align:right;line-height:1.55;font-weight:500;min-width:0}
 
 /* 長い説明：2段（上=番号+料理名、下=説明） */
 .pg-osh .mln.expanded{display:flex;flex-direction:column;gap:3px}
 .pg-osh .mln.expanded .mln-hd{display:flex;align-items:baseline;gap:14px}
 .pg-osh .mln.expanded .m-id{font-size:20px;font-weight:800;color:var(--teal-d);min-width:26px;flex-shrink:0}
 .pg-osh .mln.expanded .m-nm{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:.04em;flex:1}
-.pg-osh .mln.expanded .m-ds{font-size:11.5px;color:var(--ink2);letter-spacing:.02em;line-height:1.7;font-weight:500;padding-left:40px}
+.pg-osh .mln.expanded .m-ds{font-size:13.5px;color:var(--ink2);letter-spacing:.02em;line-height:1.75;font-weight:500;padding-left:40px}
 .pg-osh .m-ds:empty{display:none}
 
 .pg-osh .ft{display:flex;justify-content:space-between;align-items:flex-end;padding-top:2%;border-top:1px solid var(--line);margin-top:auto}
@@ -221,11 +221,12 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .edit-row label{font-family:var(--serif);font-size:10px;font-weight:700;color:var(--brown-l);letter-spacing:.1em;min-width:48px;flex-shrink:0}
 .edit-row input,.edit-row textarea{flex:1;border:1px solid rgba(0,0,0,0.14);border-radius:7px;padding:8px 10px;font-family:var(--serif);font-size:14px;color:var(--ink);outline:none;background:#fff;-webkit-appearance:none;resize:vertical;line-height:1.55}
 .edit-row input:focus,.edit-row textarea:focus{border-color:var(--teal);background:var(--teal-l)}
-.edit-kob-row{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.edit-kob-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px}
 .edit-kob-row:last-child{margin-bottom:0}
-.edit-kob-num{width:26px;height:26px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font-family:var(--serif);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.edit-kob-row input{flex:1;border:1px solid rgba(0,0,0,0.14);border-radius:7px;padding:8px 10px;font-family:var(--serif);font-size:14px;color:var(--ink);outline:none;background:#fff}
-.edit-kob-row input:focus{border-color:var(--teal);background:var(--teal-l)}
+.edit-kob-num{width:26px;height:26px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font-family:var(--serif);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:5px}
+.edit-kob-row input,.edit-kob-row .edit-kob-input{flex:1;border:1px solid rgba(0,0,0,0.14);border-radius:7px;padding:8px 10px;font-family:var(--serif);font-size:14px;color:var(--ink);outline:none;background:#fff}
+.edit-kob-row .edit-kob-input{resize:none;overflow:hidden;line-height:1.5;min-height:38px;width:100%;display:block;box-sizing:border-box}
+.edit-kob-row input:focus,.edit-kob-row .edit-kob-input:focus{border-color:var(--teal);background:var(--teal-l)}
 .edit-main{border:1px solid rgba(0,0,0,0.1);border-radius:9px;padding:10px;margin-bottom:8px;background:#fcfaf5}
 .edit-main:last-child{margin-bottom:0}
 .edit-main-hd{display:flex;align-items:center;gap:7px;margin-bottom:7px}
@@ -740,7 +741,7 @@ function openEditModal(id){
   for(let i=0;i<5;i++){
     html+='<div class="edit-kob-row">'
       +'<div class="edit-kob-num">'+(i+1)+'</div>'
-      +'<input type="text" id="ed-kob-'+i+'" value="'+esc(r.kob[i]||'')+'" placeholder="例：きんぴらごぼう">'
+      +'<textarea id="ed-kob-'+i+'" class="edit-kob-input" rows="1" placeholder="例：きんぴらごぼう（改行で行を分けられます）" oninput="autoGrowKob(this)">'+esc(r.kob[i]||'')+'</textarea>'
       +'</div>';
   }
   html+='</div>';
@@ -762,6 +763,11 @@ function openEditModal(id){
   body.innerHTML=html;
   document.getElementById('edit-overlay').classList.add('open');
   document.querySelector('.edit-modal').scrollTop=0;
+  // 小鉢textareaの高さを内容に合わせて調整
+  for(let i=0;i<5;i++){
+    const el=document.getElementById('ed-kob-'+i);
+    if(el)autoGrowKob(el);
+  }
 }
 
 function closeEditModal(){
@@ -782,10 +788,10 @@ function saveEditedRecord(){
   const newDateDisp=(document.getElementById('ed-dateDisp')?.value||'').trim();
   const newNote=(document.getElementById('ed-note')?.value||'').trim();
 
-  // 小鉢を収集
+  // 小鉢を収集（改行は保持、前後の空白・改行のみ除去）
   const newKob=[];
   for(let i=0;i<5;i++){
-    newKob.push((document.getElementById('ed-kob-'+i)?.value||'').trim());
+    newKob.push((document.getElementById('ed-kob-'+i)?.value||'').replace(/^\n+|\n+$/g,'').trim());
   }
 
   // メインA-Fを更新（mainsSnapがあれば）

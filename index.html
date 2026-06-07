@@ -9,7 +9,7 @@
 <meta name="supported-color-schemes" content="light">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<title>小鉢ランチ お品書き・盛り付けマニュアル | Café 照</title>
+<title>小鉢ランチ お品書き・メインメニュー | Café 照</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap');
@@ -69,6 +69,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .btn-sm{font-size:11px;padding:7px 13px;border-radius:18px;border:1px solid rgba(0,0,0,.15);background:#fff;cursor:pointer;color:var(--ink);font-family:var(--sans);transition:all .15s;display:inline-flex;align-items:center;gap:4px}
 .btn-sm:hover{border-color:var(--teal);background:var(--teal-l)}
 .btn-sm.danger:hover{border-color:var(--red);color:var(--red);background:#fdf0ee}
+.btn-sm:disabled{opacity:.28;cursor:default;pointer-events:none}
 .preview-cap{font-family:var(--serif);font-size:11px;color:var(--brown-l);letter-spacing:.16em;text-align:center;margin:18px 0 10px}
 .a4{width:100%;aspect-ratio:210/297;border-radius:6px;overflow:hidden;box-shadow:0 6px 28px rgba(80,40,10,0.14);margin-bottom:14px;position:relative;background:#fff}
 
@@ -246,13 +247,13 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   <div class="top-bar">
     <div>
       <span class="top-shop">Café 照 ／ 広島県安芸郡熊野町</span>
-      <div class="top-title">小鉢ランチ お品書き・盛り付けマニュアル</div>
+      <div class="top-title">小鉢ランチ お品書き・メインメニュー</div>
     </div>
     <span style="font-size:22px">📜</span>
   </div>
   <div class="tab-nav">
     <button class="tab-btn active" id="tab-edit" onclick="switchTab('edit')"><span class="ti">✏️</span>本日の献立</button>
-    <button class="tab-btn" id="tab-man" onclick="switchTab('man')"><span class="ti">🍽</span>盛付マニュアル</button>
+    <button class="tab-btn" id="tab-man" onclick="switchTab('man')"><span class="ti">🍽</span>メニューデータ</button>
     <button class="tab-btn" id="tab-hist" onclick="switchTab('hist')"><span class="ti">📚</span>履歴</button>
   </div>
   <div class="panel active" id="panel-edit">
@@ -312,19 +313,19 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   </div>
   <div class="panel" id="panel-man">
     <div class="card">
-      <div class="sec-lbl">🍽 盛り付け手順マニュアル</div>
+      <div class="sec-lbl">🍽 メインメニューデータ</div>
       <div style="font-size:11px;color:var(--teal-m);margin-bottom:10px;line-height:1.6">
-        盛り付けの手順を自由に追加・並べ替えできます。⠿ を長押し／ドラッグで順番を入れ替え。
+        メインメニューを自由に追加・編集できます。各項目の ↑ ↓ ボタンで順番を変更できます。
       </div>
       <div id="man-edit"></div>
-      <button class="btn-sm" onclick="addManual()" style="margin-top:6px">＋ 手順を追加</button>
+      <button class="btn-sm" onclick="addManual()" style="margin-top:6px">＋ メニューを追加</button>
     </div>
     <div class="btn-bar">
-      <button class="btn btn-teal" onclick="saveManuals()">💾 マニュアルを保存</button>
-      <button class="btn btn-gold" onclick="printMan()">🖨 マニュアルを印刷</button>
+      <button class="btn btn-teal" onclick="saveManuals()">💾 メニューデータを保存</button>
+      <button class="btn btn-gold" onclick="printMan()">🖨 メニューデータを印刷</button>
     </div>
-    <div class="preview-cap">― 印刷イメージ：盛り付けマニュアル ―</div>
-    <div class="a4" id="pv-man"></div>
+    <div class="preview-cap">― 印刷イメージ：メインメニューデータ ―</div>
+    <div id="pv-man"></div>
   </div>
   <div class="panel" id="panel-hist">
     <div class="sec-lbl" style="font-size:13px;margin-bottom:14px">📚 保存した献立（コピーして再利用）</div>
@@ -522,26 +523,25 @@ function buildManEdit(){
   w.innerHTML='';
   if(!manuals.length){
     w.innerHTML='<div style="text-align:center;color:var(--teal-m);font-size:12px;padding:18px 8px;background:#fcfaf5;border:1px dashed rgba(0,0,0,0.14);border-radius:10px">'
-      +'まだ手順がありません。<br>下の「＋ 手順を追加」から登録してください。</div>';
+      +'まだメニューがありません。<br>下の「＋ メニューを追加」から登録してください。</div>';
     return;
   }
   manuals.forEach((m,i)=>{
     const d=document.createElement('div');
     d.className='main-edit man-card';
     d.dataset.idx=i;
-    d.draggable=true;
     d.innerHTML=
       '<div class="main-edit-hd">'
-      +'<span style="cursor:grab;font-size:16px;color:var(--teal-m);user-select:none">⠿</span>'
-      +'<input type="text" class="mname" id="man-t'+i+'" value="'+esc(m.title)+'" placeholder="手順の名前（例：1皿目の盛り付け）" oninput="syncManuals();render()">'
+      +'<button class="btn-sm" onclick="moveManual('+i+',-1)" title="上へ" style="flex-shrink:0;padding:6px 9px;line-height:1"'+(i===0?' disabled':'')+'>↑</button>'
+      +'<button class="btn-sm" onclick="moveManual('+i+',1)" title="下へ" style="flex-shrink:0;padding:6px 9px;line-height:1"'+(i===manuals.length-1?' disabled':'')+'>↓</button>'
+      +'<input type="text" class="mname" id="man-t'+i+'" value="'+esc(m.title)+'" placeholder="メニュー名（例：鳥コーロー）" oninput="syncManuals();render()">'
       +'<button class="btn-sm danger" onclick="removeManual('+i+')" style="flex-shrink:0">削除</button>'
       +'</div>'
-      +'<textarea class="mdesc" id="man-d'+i+'" placeholder="手順の説明（改行も反映されます）" oninput="syncManuals();render()" rows="3">'+esc(m.desc)+'</textarea>'
+      +'<textarea class="mdesc" id="man-d'+i+'" placeholder="説明文（改行も反映されます）" oninput="syncManuals();render()" rows="3">'+esc(m.desc)+'</textarea>'
       +'<div class="photo-slot'+(m.img?' has-img':'')+'">'
       +'<button class="ph-clear" onclick="clearManImg('+i+')">✕</button>'
-      +'<label>'+(m.img?'<img src="'+m.img+'">':'<span class="pi">📷</span><span>手順の写真を選ぶ／撮影</span>')
+      +'<label>'+(m.img?'<img src="'+m.img+'">':'<span class="pi">📷</span><span>写真を選ぶ／撮影</span>')
       +'<input type="file" accept="image/*" onchange="onManPhoto(event,'+i+')"></label></div>';
-    attachManDnd(d,w);
     w.appendChild(d);
   });
 }
@@ -574,6 +574,14 @@ function reorderManuals(from,to){
   manuals.splice(to,0,item);
   buildManEdit();render();
 }
+// ↑↓ボタンで隣と入れ替え（全端末で確実に動く並べ替え）
+function moveManual(i,dir){
+  syncManuals();
+  const j=i+dir;
+  if(j<0||j>=manuals.length)return;
+  const tmp=manuals[i];manuals[i]=manuals[j];manuals[j]=tmp;
+  buildManEdit();render();
+}
 function syncManuals(){
   manuals.forEach((m,i)=>{
     const t=document.getElementById('man-t'+i),d=document.getElementById('man-d'+i);
@@ -587,14 +595,14 @@ function addManual(){
   buildManEdit();render();
 }
 function removeManual(i){
-  if(!confirm('この手順を削除しますか？'))return;
+  if(!confirm('このメニューを削除しますか？'))return;
   syncManuals();
   manuals.splice(i,1);
   buildManEdit();render();
 }
 function onManPhoto(ev,i){const f=ev.target.files[0];if(!f)return;syncManuals();compress(f,d=>{manuals[i].img=d;buildManEdit();render()})}
-function clearManImg(i){if(!confirm('この手順の写真を削除しますか？'))return;syncManuals();manuals[i].img='';buildManEdit();render()}
-function saveManuals(){syncManuals();save(MAN_KEY,manuals);toast('✅ マニュアルを保存しました')}
+function clearManImg(i){if(!confirm('この写真を削除しますか？'))return;syncManuals();manuals[i].img='';buildManEdit();render()}
+function saveManuals(){syncManuals();save(MAN_KEY,manuals);toast('✅ メニューデータを保存しました')}
 function compress(file,cb,max){
   max=max||1280;
   const fr=new FileReader();
@@ -685,28 +693,53 @@ function oshPageHTML(){
     +'</div></div></div>';
 }
 
-function manPageHTML(){
+const MAN_PER_PAGE=4; // 1ページあたりの項目数（固定）
+// 1項目（写真＋タイトル＋説明）のカードHTML
+function manRowHTML(m){
+  return '<div class="mn-row">'
+    +'<div class="mn-rimg">'+(m.img?'<img src="'+m.img+'">':'写真未登録')+'</div>'
+    +'<div class="mn-rtxt"><div class="mn-rt">'+(esc(m.title)||'（無題）')+'</div>'
+    +'<div class="mn-rd">'+esc(m.desc).replace(/\n/g,'<br>')+'</div></div>'
+    +'</div>';
+}
+// 1ページ分のHTML（項目は最大4つ）
+function manOnePageHTML(items,pageNo,total){
   let body;
-  if(!manuals.length){
-    body='<div class="mn-empty">登録された手順がありません</div>';
+  if(!items.length){
+    body='<div class="mn-empty">登録された項目がありません</div>';
   }else{
-    const rows=manuals.map(m=>'<div class="mn-row">'
-      +'<div class="mn-rimg">'+(m.img?'<img src="'+m.img+'">':'写真未登録')+'</div>'
-      +'<div class="mn-rtxt"><div class="mn-rt">'+(esc(m.title)||'（無題）')+'</div>'
-      +'<div class="mn-rd">'+esc(m.desc).replace(/\n/g,'<br>')+'</div></div>'
-      +'</div>').join('');
-    body='<div class="mn-list">'+rows+'</div>';
+    // 4つに満たないページも、各カードが1/4の高さになるよう空枠で埋める
+    const rows=items.map(manRowHTML);
+    for(let i=items.length;i<MAN_PER_PAGE;i++){
+      rows.push('<div class="mn-row" style="visibility:hidden"></div>');
+    }
+    body='<div class="mn-list">'+rows.join('')+'</div>';
   }
+  const pageLbl=total>1
+    ?'<div style="position:absolute;top:0;right:0;font-size:9px;color:var(--brown);letter-spacing:.1em">'+pageNo+' / '+total+'</div>'
+    :'';
   return '<div class="pg-man wash"><div class="tex"></div><div class="f1"></div><div class="in">'
-    +'<div class="mn-hd"><div class="mn-en">CAFÉ TERI ／ PLATING MANUAL</div><div class="mn-ttl">盛り付けマニュアル</div></div>'
-    +body+'<div class="mn-foot">― この見本どおりに盛り付けてください ―</div>'
+    +'<div class="mn-hd" style="position:relative">'+pageLbl
+    +'<div class="mn-en">CAFÉ TERI ／ MAIN MENU</div><div class="mn-ttl">メインメニューデータ</div></div>'
+    +body+'<div class="mn-foot">― Café 照 メインメニュー ―</div>'
     +'</div></div>';
 }
+// 全ページの配列を返す（4項目ごとに改ページ）
+function manPages(){
+  if(!manuals.length) return [manOnePageHTML([],1,1)];
+  const chunks=[];
+  for(let i=0;i<manuals.length;i+=MAN_PER_PAGE){
+    chunks.push(manuals.slice(i,i+MAN_PER_PAGE));
+  }
+  return chunks.map((items,idx)=>manOnePageHTML(items,idx+1,chunks.length));
+}
+// 後方互換（1ページ目のみ返す）
+function manPageHTML(){ return manPages()[0]; }
 
 function render(){
   const a=document.getElementById('pv-photo');if(a)a.innerHTML=photoPageHTML();
   const b=document.getElementById('pv-osh');if(b)b.innerHTML=oshPageHTML();
-  const c=document.getElementById('pv-man');if(c)c.innerHTML=manPageHTML();
+  const c=document.getElementById('pv-man');if(c)c.innerHTML=manPages().map(p=>'<div class="a4">'+p+'</div>').join('');
 }
 function switchTab(t){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -1086,7 +1119,7 @@ function fillImagePreview(win, imgList){
 }
 function printDay(){render();doPrint([photoPageHTML(),oshPageHTML()])}
 function printOshOnly(){render();doPrint([oshPageHTML()])}
-function printMan(){render();doPrint([manPageHTML()])}
+function printMan(){render();doPrint(manPages())}
 
 /* ── 履歴データから印刷（写真ページ＋お品書きページ） ── */
 function printHist(id){

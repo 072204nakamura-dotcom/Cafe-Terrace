@@ -268,6 +268,16 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
       <div id="kob-edit"></div>
     </div>
     <div class="card">
+      <div class="sec-lbl">🍽 選べるメイン A〜F（2枚目お品書きに印刷）</div>
+      <div style="font-size:11px;color:var(--teal-m);margin-bottom:10px;line-height:1.6">
+        お品書きの「お好きなメインをお選びください」に出る一覧です。料理名を空にすると、その記号は印刷に出ません。
+      </div>
+      <div id="main-edit"></div>
+      <div class="btn-bar" style="margin-top:6px;margin-bottom:0">
+        <button class="btn btn-teal" onclick="saveMains()">💾 メニューを保存</button>
+      </div>
+    </div>
+    <div class="card">
       <div class="sec-lbl">📷 全体像の見本写真（1枚目に印刷・たまの差し替え用）</div>
       <div class="photo-slot" id="slot-zen">
         <button class="ph-clear" onclick="clearPhoto()">✕</button>
@@ -483,9 +493,26 @@ function autoGrowKob(el){
   el.style.height='auto';
   el.style.height=el.scrollHeight+'px';
 }
-// ═══ メニュー側（mains）は手順マニュアルとは別。第2段階で入力/履歴側に編集欄を整備する。
-// saveRecord等からの呼び出し互換のため、現状はメニュー値を画面から読み取れる場合のみ反映する安全版。
+// ═══ 選べるメイン A〜F（お品書き2枚目）の編集 ═══
+// マニュアル（manuals）とは別データ。本日の献立タブで編集し、お品書きに連動する。
 function syncMains(){mains.forEach((m,i)=>{const a=document.getElementById('mn'+i),b=document.getElementById('md'+i);if(a)m.name=a.value;if(b)m.desc=b.value})}
+function buildMainEdit(){
+  const w=document.getElementById('main-edit');
+  if(!w)return;
+  w.innerHTML='';
+  mains.forEach((m,i)=>{
+    const d=document.createElement('div');
+    d.className='main-edit';
+    d.innerHTML=
+      '<div class="main-edit-hd">'
+      +'<span class="main-edit-id">'+(m.id||String.fromCharCode(65+i))+'</span>'
+      +'<input type="text" class="mname" id="mn'+i+'" value="'+esc(m.name)+'" placeholder="料理名（空にすると印刷に出ません）" oninput="syncMains();render()">'
+      +'</div>'
+      +'<textarea id="md'+i+'" placeholder="説明文（改行も反映されます）" oninput="syncMains();render()" rows="2">'+esc(m.desc)+'</textarea>';
+    w.appendChild(d);
+  });
+}
+function saveMains(){syncMains();save(MAIN_KEY,mains);toast('✅ メニューを保存しました')}
 
 // ═══ 盛り付け手順マニュアル（manuals）の編集 ═══
 let manDragSrc=null;
@@ -1100,7 +1127,7 @@ function printHist(id){
   toast('🖨 '+(r.dateDisp||r.date)+' のお品書きを印刷します');
 }
 
-buildKobEdit();buildManEdit();setDate();render();
+buildKobEdit();buildMainEdit();buildManEdit();setDate();render();
 // 起動時にクラウドからデータを取得して合成（画面表示後に実行）
 if(GAS_URL)setTimeout(()=>loadFromGAS(true),1000);
 </script>

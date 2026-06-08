@@ -12,15 +12,17 @@
 <title>小鉢ランチ お品書き・メインメニュー | Café 照</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Parisienne&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   --ink:#0d0805;--ink2:#1f0f06;--brown:#54371a;--brown-l:#6b4c2a;
   --line:rgba(40,20,5,0.32);--line-d:rgba(40,20,5,0.7);
   --teal:#054a37;--teal-l:#D8EDE3;--teal-m:#1e7a5d;--teal-d:#03301f;
   --gold:#8B6411;
+  --olive:#4a5836;--olive-d:#3a4628;
+  --gold-line:#c6a45c;--gold-soft:#d8c08a;--sage:#e4e7d6;--sage-band:#d9dec7;
   --red:#a02a1d;--paper:#fdf9f0;
-  --serif:'Shippori Mincho B1',serif;--sans:'Zen Kaku Gothic New',sans-serif;
+  --serif:'Shippori Mincho B1',serif;--sans:'Zen Kaku Gothic New',sans-serif;--script:'Parisienne',cursive;
 }
 body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100vh}
 .wrap{max-width:600px;margin:0 auto;padding:18px 14px 80px}
@@ -76,8 +78,8 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 /* 共通 和紙背景 */
 .wash{background:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%);position:relative;overflow:hidden}
 .wash .tex{position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px)}
-.wash .f1{position:absolute;top:3%;left:2.4%;right:2.4%;bottom:3%;border:2px solid var(--line-d);pointer-events:none}
-.wash .f2{position:absolute;top:3.8%;left:3.1%;right:3.1%;bottom:3.8%;border:1px solid var(--line);pointer-events:none}
+.wash .f1{position:absolute;top:3%;left:2.4%;right:2.4%;bottom:3%;border:1.5px solid var(--gold-line);pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:-13px -13px,calc(100% + 13px) -13px,-13px calc(100% + 13px),calc(100% + 13px) calc(100% + 13px)}
+.wash .f2{position:absolute;top:3.7%;left:3%;right:3%;bottom:3.7%;border:0.8px solid var(--gold-soft);pointer-events:none}
 
 /* ─────────────── 1枚目：見本写真＋ごはん量（カラー） ─────────────── */
 .pg-photo{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}
@@ -89,76 +91,63 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .pg-photo .t-ttl{font-size:23px;font-weight:800;color:var(--ink2);letter-spacing:.2em;white-space:nowrap}
 .pg-photo .t-dt{font-size:12px;color:var(--brown);letter-spacing:.1em;margin-top:7px;white-space:nowrap;font-weight:600}
 .pg-photo .hd-center{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding-bottom:3.4%;border-bottom:1.5px solid var(--line-d);margin-bottom:4%}
-.pg-photo .t-ttl-big{font-family:var(--serif);font-size:38px;font-weight:800;color:var(--ink2);letter-spacing:.18em;text-align:center;line-height:1}
+.pg-photo .t-ttl-big{font-family:var(--serif);font-size:36px;font-weight:800;color:var(--olive-d);letter-spacing:.18em;text-align:center;line-height:1}
 .pg-photo .t-price-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;justify-content:center}
 .pg-photo .t-price{font-family:var(--serif);font-size:30px;font-weight:800;color:var(--ink2);letter-spacing:.04em}
 .pg-photo .t-tax-ex{font-family:var(--serif);font-size:18px;color:var(--ink2);font-weight:700;letter-spacing:.06em}
-.pg-photo .sec{text-align:center;font-size:16px;font-weight:800;color:var(--teal-d);letter-spacing:.18em;margin-bottom:3.4%;position:relative}
+.pg-photo .sec{text-align:center;font-size:16px;font-weight:800;color:var(--olive-d);letter-spacing:.18em;margin-bottom:3.4%;position:relative}
 .pg-photo .sec span{background:#faf4e4;padding:0 14px;position:relative;z-index:1}
-.pg-photo .sec::after{content:'';position:absolute;left:14%;right:14%;top:50%;height:1.8px;background:var(--teal);opacity:.55}
+.pg-photo .sec::after{content:'';position:absolute;left:14%;right:14%;top:50%;height:1.5px;background:var(--olive);opacity:.45}
 .pg-photo .img-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;margin-bottom:3.5%;padding:0 2%}
 .pg-photo .img-wrap img{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 5px 18px rgba(40,20,5,.3);border:3px solid #fff;outline:1.5px solid var(--line-d)}
 .pg-photo .rice-row{display:flex;gap:2.5%;margin-bottom:3%}
-.pg-photo .rc{flex:1;border:2px solid var(--teal);border-radius:8px;padding:2.6% 1%;text-align:center;background:rgba(255,255,255,.7)}
-.pg-photo .rc-n{font-family:var(--serif);font-size:20px;font-weight:800;color:var(--teal-d);letter-spacing:.06em}
+.pg-photo .rc{flex:1;border:1.5px solid var(--gold-line);border-radius:8px;padding:2.6% 1%;text-align:center;background:rgba(255,255,255,.55)}
+.pg-photo .rc-n{font-family:var(--serif);font-size:20px;font-weight:800;color:var(--olive-d);letter-spacing:.06em}
 .pg-photo .rc-p{font-size:14px;color:#7a5410;margin-top:4px;font-weight:800}
 .pg-photo .set-bar{text-align:center;font-size:15px;color:var(--ink2);letter-spacing:.1em;padding:2% 0;font-weight:700;margin-bottom:2%}
 .pg-photo .foot{text-align:center;font-size:10px;color:rgba(40,20,5,0.55);letter-spacing:.14em;margin-top:auto;padding-top:2%;border-top:1px solid var(--line)}
 
-/* ─────────────── 2枚目：お品書き（毎日差し替え・大きく濃く） ─────────────── */
+/* ─────────────── 2枚目：お品書き（参考画像デザイン版） ─────────────── */
 .pg-osh{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}
-.pg-osh .in{position:absolute;top:5.4%;left:5.5%;right:5.5%;bottom:5%;display:flex;flex-direction:column}
-.pg-osh .hd{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:2.4%;border-bottom:1.5px solid var(--line-d);margin-bottom:3.4%}
-.pg-osh .s-en{font-size:9px;color:var(--brown);letter-spacing:.2em;margin-bottom:4px}
-.pg-osh .s-nm{font-size:19px;font-weight:800;color:var(--ink2);letter-spacing:.14em}
-.pg-osh .t-area{text-align:right}
-.pg-osh .t-ttl{font-size:27px;font-weight:800;color:var(--ink2);letter-spacing:.26em;white-space:nowrap}
-.pg-osh .t-dt{font-size:13px;color:var(--brown);letter-spacing:.1em;margin-top:7px;white-space:nowrap;font-weight:700}
-.pg-osh .pr-wrap{text-align:center;margin-bottom:4%}
-.pg-osh .pr{font-size:30px;font-weight:800;color:var(--ink2);letter-spacing:.04em;white-space:nowrap;display:inline-flex;align-items:baseline;gap:8px}
-.pg-osh .pr small{font-size:14px;font-weight:500;color:var(--brown)}
-.pg-osh .pr-sub{font-size:13px;color:var(--brown);letter-spacing:.08em;margin-top:5px;font-weight:600}
+.pg-osh .in{position:absolute;top:5%;left:6%;right:6%;bottom:5%;display:flex;flex-direction:column}
 .pg-osh .body{flex:1;display:flex;flex-direction:column;min-height:0}
-.pg-osh .sec{text-align:center;font-size:15px;font-weight:800;color:var(--teal-d);letter-spacing:.2em;margin-bottom:3.4%;position:relative}
-.pg-osh .sec span{background:#faf4e4;padding:0 16px;position:relative;z-index:1}
-.pg-osh .sec::after{content:'';position:absolute;left:12%;right:12%;top:50%;height:1.8px;background:var(--teal);opacity:.45}
 
-/* 小鉢一覧（2列×3行・茶色の四角枠数字） */
-.pg-osh .kob-list{display:grid;grid-template-columns:1fr 1fr;column-gap:5%;row-gap:1.6%;margin-bottom:5%;padding:1% 4% 0}
-.pg-osh .kl{display:flex;align-items:center;gap:10px;padding:2.4% 0;border-bottom:1px dotted rgba(84,55,26,0.4)}
-.pg-osh .kl-n{font-family:var(--serif);font-size:14px;font-weight:800;color:#fff;background:var(--brown);width:28px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
-.pg-osh .kl-t{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink);letter-spacing:.06em;line-height:1.35;flex:1;min-width:0;word-break:break-word}
+/* ヘッダー */
+.pg-osh .osh-cafe{font-family:var(--script);font-size:30px;color:var(--olive);text-align:center;line-height:1;letter-spacing:.02em;margin-bottom:0}
+.pg-osh .osh-ttl{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 12px}
+.pg-osh .osh-ttl .t-txt{font-family:var(--serif);font-size:29px;font-weight:800;color:var(--olive-d);letter-spacing:.2em;white-space:nowrap}
+.pg-osh .osh-rule{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5%}
+.pg-osh .osh-rule .dot{width:4px;height:4px;border-radius:50%;background:var(--olive);opacity:.55}
+.pg-osh .osh-rule .ln{width:64px;height:1px;background:var(--olive);opacity:.4}
 
-.pg-osh .sec-main{margin-top:0!important;font-size:17px!important;letter-spacing:.22em!important;margin-bottom:3%!important}
+/* 小鉢カード（2列） */
+.pg-osh .kob-list{display:grid;grid-template-columns:1fr 1fr;column-gap:4%;row-gap:3.4%;margin-bottom:6%;padding:0 1%}
+.pg-osh .kl{display:flex;align-items:center;gap:12px;padding:3.2% 4%;border:1px solid rgba(74,88,54,.30);border-radius:12px;background:rgba(255,255,255,.45)}
+.pg-osh .kl-n{font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;background:var(--olive);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
+.pg-osh .kl-t{font-family:var(--serif);font-size:15.5px;font-weight:600;color:var(--ink);letter-spacing:.04em;line-height:1.3;flex:1;min-width:0;word-break:break-word}
 
-/* 「お好きなメインをお選びください」を最も目立たせる強調見出し */
-.pg-osh .sec-pick{font-size:25px!important;font-weight:800!important;color:#fff!important;letter-spacing:.16em!important;margin-top:5%!important;margin-bottom:4.5%!important;padding:2.6% 4%!important;background:var(--teal)!important;border-radius:8px!important;box-shadow:0 3px 10px rgba(5,74,55,0.3)!important;text-align:center!important}
-.pg-osh .sec-pick span{background:transparent!important;padding:0!important;color:#fff!important}
-.pg-osh .sec-pick::after{display:none!important}
+/* 「お好きなメインをお選びください」帯 */
+.pg-osh .sec-pick{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--sage-band);border-radius:10px;padding:2.6% 4%;margin-bottom:4.5%}
+.pg-osh .sec-pick .t-txt{font-family:var(--serif);font-size:21px;font-weight:800;color:var(--olive-d);letter-spacing:.12em}
 
-.pg-osh .note{text-align:center;font-size:13px;color:var(--ink);letter-spacing:.06em;padding:2.4% 5%;background:rgba(255,255,255,0.55);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:4%;line-height:1.8;font-weight:600}
-
-.pg-osh .ml{display:flex;flex-direction:column;gap:0;margin-bottom:3%;padding:0 2%}
-.pg-osh .mln{padding:1.6% 1.5%;border-bottom:1px dotted rgba(40,20,5,0.45)}
+/* メイン一覧 */
+.pg-osh .ml{display:flex;flex-direction:column;flex:1;padding:0 1%}
+.pg-osh .mln{display:grid;grid-template-columns:46px 1px 1fr auto;column-gap:18px;align-items:center;padding:2.2% 0;border-bottom:1px solid rgba(74,88,54,.20)}
 .pg-osh .mln:last-child{border-bottom:none}
-
-/* 短い説明：1行で番号→料理名→説明を横並び */
-.pg-osh .mln.compact{display:flex;align-items:baseline;gap:14px}
-.pg-osh .mln.compact .m-id{font-size:20px;font-weight:800;color:var(--teal-d);min-width:26px;flex-shrink:0}
-.pg-osh .mln.compact .m-nm{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:.04em;flex-shrink:0;white-space:nowrap}
-.pg-osh .mln.compact .m-ds{font-size:13.5px;color:var(--ink);flex:1;letter-spacing:.02em;text-align:right;line-height:1.55;font-weight:500;min-width:0}
-
-/* 長い説明：2段（上=番号+料理名、下=説明） */
-.pg-osh .mln.expanded{display:flex;flex-direction:column;gap:3px}
-.pg-osh .mln.expanded .mln-hd{display:flex;align-items:baseline;gap:14px}
-.pg-osh .mln.expanded .m-id{font-size:20px;font-weight:800;color:var(--teal-d);min-width:26px;flex-shrink:0}
-.pg-osh .mln.expanded .m-nm{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:.04em;flex:1}
-.pg-osh .mln.expanded .m-ds{font-size:13.5px;color:var(--ink2);letter-spacing:.02em;line-height:1.75;font-weight:500;padding-left:40px}
+.pg-osh .m-id{font-family:var(--serif);font-size:34px;font-weight:800;color:var(--olive);line-height:1;text-align:center}
+.pg-osh .m-div{width:1px;align-self:stretch;background:rgba(74,88,54,.30);margin:5px 0}
+.pg-osh .m-body{display:grid;grid-template-columns:minmax(108px,35%) 1fr;column-gap:16px;align-items:center;min-width:0}
+.pg-osh .m-nm{font-family:var(--serif);font-size:18px;font-weight:800;color:var(--ink2);letter-spacing:.03em;line-height:1.35}
+.pg-osh .m-ds{font-size:12.5px;color:var(--ink);letter-spacing:.02em;line-height:1.65;font-weight:500}
 .pg-osh .m-ds:empty{display:none}
+.pg-osh .m-flower{flex-shrink:0;opacity:.85;padding-left:6px}
+/* 説明内の【…】行を囲みボックスに（例：ソースを3種類からお選びください） */
+.pg-osh .m-callout{grid-column:1 / -1;margin-top:7px;border:1px solid var(--gold-soft);border-radius:8px;background:rgba(255,255,255,.5);padding:7px 12px;text-align:center}
+.pg-osh .m-callout .c-ttl{font-size:11.5px;color:var(--olive-d);letter-spacing:.05em;font-weight:700;margin-bottom:3px}
+.pg-osh .m-callout .c-items{font-size:13px;color:var(--ink2);font-weight:700;letter-spacing:.03em}
 
-.pg-osh .ft{display:flex;justify-content:space-between;align-items:flex-end;padding-top:2%;border-top:1px solid var(--line);margin-top:auto}
-.pg-osh .ft-r{font-size:12px;color:var(--brown);letter-spacing:.04em;font-weight:600}
-.pg-osh .ft-m{font-size:11px;color:rgba(40,20,5,0.55);letter-spacing:.12em}
+/* 本日のひとこと */
+.pg-osh .note{text-align:center;font-size:12.5px;color:var(--ink);letter-spacing:.06em;padding:2% 5%;margin:1% 0 3%;line-height:1.8;font-weight:600;font-style:italic}
 
 /* マニュアル */
 .pg-man{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}
@@ -668,28 +657,52 @@ function photoPageHTML(){
 
 /* ── 2枚目：お品書き（毎日差し替え・大きく濃く） ── */
 function oshPageHTML(){
+  // 装飾SVG（印刷で確実に出るようインライン）
+  const LEAF='<svg width="36" height="18" viewBox="0 0 36 18" xmlns="http://www.w3.org/2000/svg"><g stroke="#8a9667" stroke-width="1" stroke-linecap="round" fill="none"><path d="M3 9 H31"/></g><g fill="#9aa67a"><ellipse cx="10" cy="5" rx="4.2" ry="2" transform="rotate(-28 10 5)"/><ellipse cx="18" cy="4" rx="4.2" ry="2" transform="rotate(-28 18 4)"/><ellipse cx="26" cy="5" rx="4.2" ry="2" transform="rotate(-28 26 5)"/><ellipse cx="14" cy="13" rx="4.2" ry="2" transform="rotate(28 14 13)"/><ellipse cx="22" cy="14" rx="4.2" ry="2" transform="rotate(28 22 14)"/></g></svg>';
+  const LEAFR='<span style="display:inline-flex;transform:scaleX(-1)">'+LEAF+'</span>';
+  const FLOWER='<svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg"><g fill="#cbb273"><circle cx="11" cy="4" r="3"/><circle cx="17.6" cy="8.8" r="3"/><circle cx="15.1" cy="16.6" r="3"/><circle cx="6.9" cy="16.6" r="3"/><circle cx="4.4" cy="8.8" r="3"/></g><circle cx="11" cy="11" r="2.4" fill="#9aa67a"/></svg>';
+
+  // 小鉢（丸番号カード・2列）
   const kob=getKob();
   const kl=kob.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(v?esc(v).replace(/\n/g,'<br>'):'　　　　　　')+'</div></div>').join('');
-  // 料理名が入っているメインだけを対象にする（空のメインは非表示）
+
+  // メイン（料理名が入っているものだけ）
   const activeMains=mains.filter(m=>m.name&&m.name.trim());
-  // メイン数に応じて行間（上下padding）を自動調整：少ないほど広げる
-  const n=activeMains.length;
-  const padV=n<=3?'4.5%':n===4?'3.6%':n===5?'2.8%':'2.0%';
   const ml=activeMains.map(m=>{
-    const hasBr=m.desc&&m.desc.indexOf('\n')>=0;
-    if(hasBr){
-      return '<div class="mln expanded" style="padding-top:'+padV+';padding-bottom:'+padV+'"><div class="mln-hd"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name)+'</span></div><div class="m-ds">'+esc(m.desc).replace(/\n/g,'<br>')+'</div></div>';
-    }
-    return '<div class="mln compact" style="padding-top:'+padV+';padding-bottom:'+padV+'"><span class="m-id">'+m.id+'</span><span class="m-nm">'+esc(m.name)+'</span><span class="m-ds">'+esc(m.desc)+'</span></div>';
+    // 説明文を行単位で解析：【…】で始まる行は囲みボックスにする
+    const lines=(m.desc||'').split('\n');
+    const descLines=[]; let callout='';
+    lines.forEach(line=>{
+      const t=line.trim();
+      const mt=t.match(/^【(.+?)】(.*)$/);
+      if(mt){
+        const ctitle=esc(mt[1]); const citems=esc(mt[2].trim());
+        callout+='<div class="m-callout"><div class="c-ttl">'+ctitle+'</div>'+(citems?'<div class="c-items">'+citems+'</div>':'')+'</div>';
+      }else if(t){
+        descLines.push(esc(t));
+      }
+    });
+    const desc=descLines.join('<br>');
+    return '<div class="mln">'
+      +'<div class="m-id">'+esc(m.id)+'</div>'
+      +'<div class="m-div"></div>'
+      +'<div class="m-body"><div class="m-nm">'+esc(m.name).replace(/\n/g,'<br>')+'</div><div class="m-ds">'+desc+'</div>'+callout+'</div>'
+      +'<div class="m-flower">'+FLOWER+'</div>'
+      +'</div>';
   }).join('');
+
   const note=document.getElementById('note').value.trim();
   const noteH=note?'<div class="note">― '+esc(note)+' ―</div>':'';
+
   return '<div class="pg-osh wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
-    +'<div class="body" style="padding-top:1%">'
-    +'<div class="sec sec-main"><span>日替わり小鉢の献立</span></div>'
+    +'<div class="body">'
+    +'<div class="osh-cafe">Cafe</div>'
+    +'<div class="osh-ttl"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt">日替わり小鉢の献立</span>'+LEAFR+'</div>'
+    +'<div class="osh-rule"><span class="dot"></span><span class="ln"></span><span class="dot"></span></div>'
     +'<div class="kob-list">'+kl+'</div>'
+    +'<div class="sec-pick"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt">お好きなメインをお選びください</span>'+LEAFR+'</div>'
+    +'<div class="ml">'+ml+'</div>'
     +noteH
-    +'<div class="sec sec-pick"><span>お好きなメインをお選びください</span></div><div class="ml">'+ml+'</div>'
     +'</div></div></div>';
 }
 

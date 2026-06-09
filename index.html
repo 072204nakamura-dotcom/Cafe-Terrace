@@ -10,7 +10,6 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>小鉢ランチ お品書き・メインメニュー | Café 照</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Parisienne&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -986,150 +985,29 @@ function copyShare(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done).catch(()=>{fb(t);done()});else{fb(t);done()}
   function fb(x){const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
 }
-async function doPrint(pages){
-  // 【重要】ボタン押下直後に空タブを開く（iPhoneのポップアップブロック対策）
-  const win=window.open('','_blank');
-  if(!win){
-    toast('⚠️ ポップアップを許可してください（設定→アプリ→Safari→ポップアップブロックをオフ）');
-    return;
+// ── 標準印刷（ブラウザのプリント機能を直接使う・iPhone Safari対応） ──
+// html2canvasでの画像化はSafariでクラッシュしやすいため、#print-host に
+// ページを流し込んで window.print() を呼ぶ方式に変更。文字はベクターのまま綺麗。
+function doPrint(pages){
+  const host=document.getElementById('print-host');
+  if(!host){toast('⚠️ 印刷領域が見つかりません');return;}
+  // 各ページを .pg（A4サイズ）で包んで流し込む
+  host.innerHTML=pages.map(p=>'<div class="pg">'+p+'</div>').join('');
+
+  let done=false; // 印刷ダイアログが二重に出るのを防ぐ
+  const go=()=>{ if(done)return; done=true; try{window.print();}catch(e){toast('⚠️ 印刷を開始できませんでした');} };
+  // レイアウト確定（2フレーム）を待ってから印刷ダイアログを出す
+  const fire=()=>requestAnimationFrame(()=>requestAnimationFrame(go));
+  // フォント読み込み完了を待つ（本体で読込済みのため通常は即時）
+  if(document.fonts&&document.fonts.ready){
+    document.fonts.ready.then(fire);
+    // 念のためのフォールバック（fonts.readyが解決しない端末対策）
+    setTimeout(go,1500);
+  }else{
+    setTimeout(fire,300);
   }
-  // 開いたタブにローディング画面を表示
-  win.document.open();
-  win.document.write(loadingHTML());
-  win.document.close();
-
-  // 画面外に一時レンダリング領域を作成（A4比率 794×1123px）
-  const stage=document.createElement('div');
-  stage.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#faf4e4;z-index:-1';
-  document.body.appendChild(stage);
-
-  const imgDataList=[];
-
-  try{
-    if(typeof html2canvas==='undefined'){
-      throw new Error('html2canvasが読み込まれていません');
-    }
-
-    for(let i=0;i<pages.length;i++){
-      const pageDiv=document.createElement('div');
-      pageDiv.style.cssText='width:794px;height:1123px;position:relative;background:#faf4e4;overflow:hidden;color-scheme:light only';
-      let fixed=pages[i].replace(/class="(pg-photo|pg-osh|pg-man)([^"]*)"/g,
-        'class="$1$2" style="background:#faf4e4 !important;width:794px;height:1123px"');
-      pageDiv.innerHTML=fixed;
-      stage.appendChild(pageDiv);
-
-      await new Promise(r=>setTimeout(r,400));
-
-      const canvas=await html2canvas(pageDiv,{
-        scale:2,
-        backgroundColor:'#faf4e4',
-        useCORS:true,
-        allowTaint:true,
-        logging:false,
-        width:794,
-        height:1123,
-        windowWidth:794,
-        windowHeight:1123,
-      });
-      imgDataList.push(canvas.toDataURL('image/png'));
-      stage.removeChild(pageDiv);
-    }
-  }catch(e){
-    stage.remove();
-    // 開いたタブにエラー表示
-    try{
-      win.document.open();
-      win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"></head>'
-        +'<body style="font-family:sans-serif;padding:40px;text-align:center;color:#c0392b">'
-        +'<h2>画像の生成に失敗しました</h2><p>'+e.message+'</p>'
-        +'<p>もう一度お試しください。</p>'
-        +'<button onclick="window.close()" style="padding:12px 24px;margin-top:20px;border:none;border-radius:8px;background:#2a5c3f;color:#fff;font-size:14px">閉じる</button>'
-        +'</body></html>');
-      win.document.close();
-    }catch(e2){}
-    toast('⚠️ 画像生成に失敗：'+e.message);
-    return;
-  }
-
-  stage.remove();
-
-  // 開いたタブに画像プレビューを流し込む
-  fillImagePreview(win, imgDataList);
 }
 
-// ローディング画面HTML
-function loadingHTML(){
-  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
-    +'<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-    +'<title>準備中… | Café 照</title>'
-    +'<style>'
-    +'*{margin:0;padding:0}'
-    +'body{background:#faf4e4;font-family:-apple-system,sans-serif;'
-    +'display:flex;flex-direction:column;align-items:center;justify-content:center;'
-    +'height:100vh;color:#2a5c3f}'
-    +'.spinner{width:48px;height:48px;border:4px solid #c8e6d0;border-top-color:#2a5c3f;'
-    +'border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}'
-    +'@keyframes spin{to{transform:rotate(360deg)}}'
-    +'.txt{font-size:15px;letter-spacing:.1em;font-weight:700}'
-    +'.sub{font-size:12px;color:#7a6e5e;margin-top:8px}'
-    +'</style></head><body>'
-    +'<div class="spinner"></div>'
-    +'<div class="txt">印刷用の画像を準備しています…</div>'
-    +'<div class="sub">数秒お待ちください</div>'
-    +'</body></html>';
-}
-
-// 開いたタブ(win)に画像プレビューを流し込む
-function fillImagePreview(win, imgList){
-  const imgsHTML=imgList.map((src,i)=>
-    '<div class="sheet"><img src="'+src+'" alt="ページ'+(i+1)+'"></div>'
-  ).join('');
-
-  const html='<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
-    +'<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-    +'<title>印刷プレビュー | Café 照 小鉢ランチ</title>'
-    +'<style>'
-    +'*{margin:0;padding:0;box-sizing:border-box}'
-    +'@page{size:A4 portrait;margin:0}'
-    +'body{background:#cfc8ba;font-family:-apple-system,sans-serif}'
-    +'.bar{position:sticky;top:0;background:#2a5c3f;padding:14px 16px;display:flex;'
-    +'gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;'
-    +'box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:10}'
-    +'.bar .lbl{color:#fff;font-size:13px;letter-spacing:.06em;margin-right:4px}'
-    +'.bar button{padding:11px 20px;border:none;border-radius:24px;font-size:13px;'
-    +'font-weight:700;letter-spacing:.08em;cursor:pointer;background:#fff;color:#054a37;'
-    +'box-shadow:0 2px 8px rgba(0,0,0,.15)}'
-    +'.bar button:active{opacity:.85;transform:scale(.97)}'
-    +'.bar .close-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)}'
-    +'.hint{padding:12px 16px;background:#fff3cd;color:#7a5a00;font-size:12px;'
-    +'line-height:1.7;text-align:center}'
-    +'.area{padding:16px;display:flex;flex-direction:column;align-items:center;gap:14px}'
-    +'.sheet{width:100%;max-width:794px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.18)}'
-    +'.sheet img{width:100%;height:auto;display:block}'
-    +'@media print{'
-    +'  body{background:#fff}'
-    +'  .bar,.hint{display:none!important}'
-    +'  .area{padding:0;gap:0}'
-    +'  .sheet{max-width:none;width:100%;box-shadow:none;page-break-after:always}'
-    +'  .sheet:last-child{page-break-after:auto}'
-    +'  .sheet img{width:100%;height:auto}'
-    +'}'
-    +'</style></head><body>'
-    +'<div class="bar">'
-    +'<span class="lbl">📄 '+imgList.length+'枚</span>'
-    +'<button onclick="window.print()">🖨 印刷する</button>'
-    +'<button class="close-btn" onclick="window.close()">✕ 閉じる</button>'
-    +'</div>'
-    +'<div class="hint">印刷：「🖨 印刷する」ボタン、または共有ボタン（□↑）→「プリント」<br>'
-    +'画像を保存：画像を長押し →「”写真”に追加」</div>'
-    +'<div class="area">'+imgsHTML+'</div>'
-    +'</body></html>';
-
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
-  toast('✅ プレビューを表示しました');
-}
 function printDay(){render();doPrint([photoPageHTML(),oshPageHTML()])}
 function printOshOnly(){render();doPrint([oshPageHTML()])}
 function printMan(){render();doPrint(manPages())}

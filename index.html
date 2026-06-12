@@ -681,8 +681,13 @@ function buildOshHTML(kobArr, mainsArr, note){
   // メイン（料理名が入っているものだけ）
   const activeMains=(mainsArr||[]).filter(m=>m&&m.name&&m.name.trim());
   const ml=activeMains.map(m=>{
+    // 旧形式のソース説明文（履歴スナップショット等に残存）は描画時に新形式へ変換
+    let descRaw=m.desc||'';
+    if(descRaw.indexOf('【ソースは3種類】')>=0){
+      descRaw='野菜がたっぷり入ったコラーゲン豊富なソースの上に、揚げ焼きした国産の熟成鶏をのせています。\nソースは3種類から選べます。\n【①帆立塩麹 ②コク辛味噌 ③海鮮醤油】';
+    }
     // 説明文を行単位で解析：【…】で始まる行は囲みボックスにする
-    const lines=(m.desc||'').split('\n');
+    const lines=descRaw.split('\n');
     const descLines=[]; let callout='';
     lines.forEach(line=>{
       const t=line.trim();

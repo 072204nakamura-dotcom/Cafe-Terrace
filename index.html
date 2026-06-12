@@ -121,32 +121,32 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 
 /* 小鉢カード（2列） */
 .pg-osh .kob-list{display:grid;grid-template-columns:1fr 1fr;column-gap:4%;row-gap:2.8%;margin-bottom:4%;padding:0 1%}
-.pg-osh .kl{display:flex;align-items:center;gap:12px;padding:2.6% 4%;border:1px solid rgba(74,88,54,.30);border-radius:12px;background:rgba(255,255,255,.45)}
-.pg-osh .kl-n{font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;background:var(--olive);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
-.pg-osh .kl-t{font-family:var(--serif);font-size:15.5px;font-weight:600;color:var(--ink);letter-spacing:.04em;line-height:1.3;flex:1;min-width:0;word-break:break-word}
+.pg-osh .kl{display:flex;align-items:center;gap:13px;padding:3% 4%;border:1px solid rgba(74,88,54,.30);border-radius:12px;background:rgba(255,255,255,.45)}
+.pg-osh .kl-n{font-family:var(--serif);font-size:17px;font-weight:700;color:#fff;background:var(--olive);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
+.pg-osh .kl-t{font-family:var(--serif);font-size:18.5px;font-weight:600;color:var(--ink);letter-spacing:.04em;line-height:1.35;flex:1;min-width:0;word-break:break-word}
 
 /* 「お好きなメインをお選びください」帯 */
 .pg-osh .sec-pick{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--sage-band);border-radius:10px;padding:2.2% 4%;margin-bottom:3.2%}
-.pg-osh .sec-pick .t-txt{font-family:var(--serif);font-size:21px;font-weight:800;color:var(--olive-d);letter-spacing:.12em}
+.pg-osh .sec-pick .t-txt{font-family:var(--serif);font-size:23px;font-weight:800;color:var(--olive-d);letter-spacing:.12em}
 
 /* メイン一覧 */
 .pg-osh .ml{display:flex;flex-direction:column;flex:1;padding:0 1%}
-.pg-osh .mln{display:grid;grid-template-columns:42px 1px 1fr auto;column-gap:16px;align-items:center;padding:1.5% 0;border-bottom:1px solid rgba(74,88,54,.20)}
+.pg-osh .mln{display:grid;grid-template-columns:48px 1px 1fr auto;column-gap:16px;align-items:center;padding:2.1% 0;border-bottom:1px solid rgba(74,88,54,.20)}
 .pg-osh .mln:last-child{border-bottom:none}
-.pg-osh .m-id{font-family:var(--serif);font-size:29px;font-weight:800;color:var(--olive);line-height:1;text-align:center}
+.pg-osh .m-id{font-family:var(--serif);font-size:33px;font-weight:800;color:var(--olive);line-height:1;text-align:center}
 .pg-osh .m-div{width:1px;align-self:stretch;background:rgba(74,88,54,.30);margin:4px 0}
-.pg-osh .m-body{display:grid;grid-template-columns:minmax(104px,35%) 1fr;column-gap:14px;align-items:center;min-width:0}
-.pg-osh .m-nm{font-family:var(--serif);font-size:16.5px;font-weight:800;color:var(--ink2);letter-spacing:.03em;line-height:1.3}
-.pg-osh .m-ds{font-size:12px;color:var(--ink);letter-spacing:.02em;line-height:1.5;font-weight:500}
+.pg-osh .m-body{display:grid;grid-template-columns:minmax(122px,35%) 1fr;column-gap:15px;align-items:center;min-width:0}
+.pg-osh .m-nm{font-family:var(--serif);font-size:19.5px;font-weight:800;color:var(--ink2);letter-spacing:.03em;line-height:1.32}
+.pg-osh .m-ds{font-size:14.5px;color:var(--ink);letter-spacing:.02em;line-height:1.55;font-weight:500}
 .pg-osh .m-ds:empty{display:none}
 .pg-osh .m-flower{flex-shrink:0;opacity:.85;padding-left:6px}
 /* 説明内の【…】行を囲みボックスに（例：ソースを3種類からお選びください） */
-.pg-osh .m-callout{grid-column:1 / -1;margin-top:5px;border:1px solid var(--gold-soft);border-radius:8px;background:rgba(255,255,255,.5);padding:5px 12px;text-align:center}
-.pg-osh .m-callout .c-ttl{font-size:11.5px;color:var(--olive-d);letter-spacing:.05em;font-weight:700;margin-bottom:2px}
-.pg-osh .m-callout .c-items{font-size:13px;color:var(--ink2);font-weight:700;letter-spacing:.03em}
+.pg-osh .m-callout{grid-column:1 / -1;margin-top:6px;border:1px solid var(--gold-soft);border-radius:8px;background:rgba(255,255,255,.5);padding:7px 12px;text-align:center}
+.pg-osh .m-callout .c-ttl{font-size:13px;color:var(--olive-d);letter-spacing:.05em;font-weight:700;margin-bottom:2px}
+.pg-osh .m-callout .c-items{font-size:15.5px;color:var(--ink2);font-weight:700;letter-spacing:.04em}
 
 /* 本日のひとこと */
-.pg-osh .note{text-align:center;font-size:12.5px;color:var(--ink);letter-spacing:.06em;padding:1% 5%;margin:.5% 0 1.5%;line-height:1.6;font-weight:600;font-style:italic}
+.pg-osh .note{text-align:center;font-size:14.5px;color:var(--ink);letter-spacing:.06em;padding:1% 5%;margin:.5% 0 1.5%;line-height:1.6;font-weight:600;font-style:italic}
 
 /* マニュアル */
 .pg-man{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}

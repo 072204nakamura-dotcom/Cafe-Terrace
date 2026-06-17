@@ -81,30 +81,53 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .wash .f2{position:absolute;top:3.7%;left:3%;right:3%;bottom:3.7%;border:0.8px solid var(--gold-soft);pointer-events:none}
 
 /* ─────────────── 1枚目：見本写真＋ごはん量（カラー） ─────────────── */
-.pg-photo{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}
-.pg-photo .in{position:absolute;top:5.4%;left:5.5%;right:5.5%;bottom:5%;display:flex;flex-direction:column}
-.pg-photo .hd{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:2.4%;border-bottom:1.5px solid var(--line-d);margin-bottom:3.4%}
-.pg-photo .s-en{font-size:9px;color:var(--brown);letter-spacing:.2em;margin-bottom:4px}
-.pg-photo .s-nm{font-size:19px;font-weight:800;color:var(--ink2);letter-spacing:.14em}
-.pg-photo .t-area{text-align:right}
-.pg-photo .t-ttl{font-size:23px;font-weight:800;color:var(--ink2);letter-spacing:.2em;white-space:nowrap}
-.pg-photo .t-dt{font-size:12px;color:var(--brown);letter-spacing:.1em;margin-top:7px;white-space:nowrap;font-weight:600}
-.pg-photo .hd-center{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding-bottom:3.4%;border-bottom:1.5px solid var(--line-d);margin-bottom:4%}
-.pg-photo .t-ttl-big{font-family:var(--serif);font-size:36px;font-weight:800;color:var(--olive-d);letter-spacing:.18em;text-align:center;line-height:1}
-.pg-photo .t-price-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;justify-content:center}
-.pg-photo .t-price{font-family:var(--serif);font-size:30px;font-weight:800;color:var(--ink2);letter-spacing:.04em}
-.pg-photo .t-tax-ex{font-family:var(--serif);font-size:18px;color:var(--ink2);font-weight:700;letter-spacing:.06em}
-.pg-photo .sec{text-align:center;font-size:16px;font-weight:800;color:var(--olive-d);letter-spacing:.18em;margin-bottom:3.4%;position:relative}
-.pg-photo .sec span{background:#faf4e4;padding:0 14px;position:relative;z-index:1}
-.pg-photo .sec::after{content:'';position:absolute;left:14%;right:14%;top:50%;height:1.5px;background:var(--olive);opacity:.45}
-.pg-photo .img-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;margin-bottom:3.5%;padding:0 2%}
-.pg-photo .img-wrap img{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 5px 18px rgba(40,20,5,.3);border:3px solid #fff;outline:1.5px solid var(--line-d)}
-.pg-photo .rice-row{display:flex;gap:2.5%;margin-bottom:3%}
-.pg-photo .rc{flex:1;border:1.5px solid var(--gold-line);border-radius:8px;padding:2.6% 1%;text-align:center;background:rgba(255,255,255,.55)}
-.pg-photo .rc-n{font-family:var(--serif);font-size:20px;font-weight:800;color:var(--olive-d);letter-spacing:.06em}
-.pg-photo .rc-p{font-size:14px;color:#7a5410;margin-top:4px;font-weight:800}
-.pg-photo .set-bar{text-align:center;font-size:15px;color:var(--ink2);letter-spacing:.1em;padding:2% 0;font-weight:700;margin-bottom:2%}
-.pg-photo .foot{text-align:center;font-size:10px;color:rgba(40,20,5,0.55);letter-spacing:.14em;margin-top:auto;padding-top:2%;border-top:1px solid var(--line)}
+.pg-photo{width:100%;height:100%;font-family:var(--serif);color:var(--ink);position:relative}
+.pg-photo .in{position:absolute;top:4.5%;left:5.5%;right:5.5%;bottom:4%;display:flex;flex-direction:column}
+
+/* 四隅の角飾り */
+.pg-photo .corner{position:absolute;width:30px;height:30px;z-index:3;opacity:.85}
+.pg-photo .corner.tl{top:2.6%;left:3.2%}
+.pg-photo .corner.tr{top:2.6%;right:3.2%;transform:scaleX(-1)}
+.pg-photo .corner.bl{bottom:2.4%;left:3.2%;transform:scaleY(-1)}
+.pg-photo .corner.br{bottom:2.4%;right:3.2%;transform:scale(-1,-1)}
+
+/* タイトル */
+.pg-photo .title-area{position:relative;text-align:center;margin-bottom:1.5%}
+.pg-photo .t-ttl-big{font-family:var(--serif);font-size:48px;font-weight:900;color:#6e5230;letter-spacing:.05em;line-height:1.04}
+.pg-photo .t-price{font-family:var(--serif);font-size:34px;font-weight:800;color:var(--ink2);letter-spacing:.03em;margin-top:4px;line-height:1}
+.pg-photo .t-tax{font-size:15px;color:var(--ink2);font-weight:600;letter-spacing:.04em;margin-top:5px}
+/* タイトル両脇の草花 */
+.pg-photo .botany{position:absolute;top:-6px;width:120px;height:140px;z-index:2}
+.pg-photo .botany.l{left:1%}
+.pg-photo .botany.r{right:1%;transform:scaleX(-1)}
+
+/* リボン帯のキャッチ */
+.pg-photo .ribbon{position:relative;align-self:center;background:#f3e9cf;border:1px dashed var(--gold-line);border-radius:4px;padding:9px 34px;margin:1.5% 0 2%;font-size:16px;font-weight:700;color:#6e5230;letter-spacing:.08em}
+.pg-photo .ribbon::before,.pg-photo .ribbon::after{content:'✼';position:absolute;top:50%;transform:translateY(-50%);color:var(--gold-line);font-size:13px}
+.pg-photo .ribbon::before{left:12px}
+.pg-photo .ribbon::after{right:12px}
+
+/* 写真＋左の吹き出し */
+.pg-photo .img-area{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;margin-bottom:2.5%}
+.pg-photo .img-wrap{max-width:100%;max-height:100%;display:flex}
+.pg-photo .img-wrap img{max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 5px 18px rgba(40,20,5,.28);border:3px solid #fff;outline:1.5px solid var(--line-d)}
+.pg-photo .bubble{position:absolute;top:2%;left:-1%;z-index:4;background:#fff;border:1.5px solid var(--gold-line);border-radius:46% 54% 52% 48%/52% 48% 52% 48%;padding:13px 17px;font-size:13.5px;font-weight:700;color:#6e5230;line-height:1.55;text-align:center;box-shadow:0 3px 10px rgba(40,20,5,.12)}
+.pg-photo .bubble::after{content:'';position:absolute;bottom:-9px;left:30px;width:14px;height:14px;background:#fff;border-right:1.5px solid var(--gold-line);border-bottom:1.5px solid var(--gold-line);transform:rotate(40deg)}
+
+/* セット内容 */
+.pg-photo .set-sec{text-align:center;margin-bottom:2%}
+.pg-photo .set-ttl{display:flex;align-items:center;justify-content:center;gap:12px;font-size:17px;font-weight:800;color:var(--olive-d);letter-spacing:.16em;margin-bottom:8px}
+.pg-photo .set-ttl .dash{flex:0 0 64px;border-top:1.5px dashed var(--olive);opacity:.5}
+.pg-photo .set-bar{font-size:16px;color:var(--ink2);letter-spacing:.08em;font-weight:700}
+
+/* ごはんの量 */
+.pg-photo .rice-head{display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:800;color:var(--olive-d);letter-spacing:.12em;margin-bottom:2%}
+.pg-photo .rice-row{display:flex;gap:2.4%}
+.pg-photo .rc{flex:1;border:1.5px solid var(--gold-line);border-radius:12px;padding:3% 1% 2.6%;text-align:center;background:rgba(255,255,255,.6);display:flex;flex-direction:column;align-items:center;gap:5px}
+.pg-photo .rc-n{font-family:var(--serif);font-size:19px;font-weight:800;color:var(--olive-d);letter-spacing:.05em}
+.pg-photo .rc-bowl{width:46px;height:34px;margin:1px 0}
+.pg-photo .rc-p{font-size:14px;color:#9a6a14;font-weight:800}
+.pg-photo .rc-cmt{font-size:12px;color:var(--ink);font-weight:600;line-height:1.45}
 
 /* ─────────────── 2枚目：お品書き（参考画像デザイン版） ─────────────── */
 .pg-osh{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}
@@ -644,22 +667,65 @@ function upd(d){
 /* ── 1枚目：見本写真＋ごはん量（差し替え頻度が低い） ── */
 function photoPageHTML(){
   const img=zenImg||DEFAULT_IMG;
-  return '<div class="pg-photo wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
-    +'<div class="hd hd-center">'
+  // 角飾り（金の角マーク）
+  const CORNER='<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#bfa15a" stroke-width="1.6" stroke-linecap="round"><path d="M2 14 V4 a2 2 0 0 1 2-2 H14"/><path d="M6 8 L8 6"/></g><g fill="#cbb273"><path d="M2.5 2.5 l3 1 -3 1 -1 -1 z" transform="rotate(45 2.5 2.5)"/></g></svg>';
+  // 草花スプレー（枝＋葉＋黄色い小花）
+  const BOTANY='<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">'
+    +'<g fill="none" stroke="#9aa67a" stroke-width="1.4" stroke-linecap="round">'
+    +'<path d="M110 132 C80 110 55 88 40 40"/><path d="M95 120 C78 108 70 98 64 84"/><path d="M88 96 C74 90 64 82 58 70"/><path d="M70 60 C58 56 50 50 46 40"/></g>'
+    +'<g fill="#a7b384">'
+    +'<ellipse cx="58" cy="82" rx="9" ry="4.2" transform="rotate(-35 58 82)"/><ellipse cx="70" cy="92" rx="8" ry="4" transform="rotate(30 70 92)"/>'
+    +'<ellipse cx="48" cy="58" rx="9" ry="4.2" transform="rotate(-40 48 58)"/><ellipse cx="60" cy="66" rx="8" ry="3.8" transform="rotate(25 60 66)"/>'
+    +'<ellipse cx="40" cy="36" rx="8" ry="4" transform="rotate(-45 40 36)"/></g>'
+    +'<g>'+flowerSVG(42,30)+flowerSVG(63,52)+flowerSVG(78,80)+'</g>'
+    +'</svg>';
+  // ごはん茶碗アイコン（盛り量違い：1=少なめ〜4=おかわり）
+  function bowl(level){
+    const hs=[4,7,11,14]; const h=hs[level-1];
+    return '<svg class="rc-bowl" viewBox="0 0 46 34" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M7 18 L39 18 L34 28 Q23 33 12 28 Z" fill="#eadcbd" stroke="#c9b890" stroke-width="1.2"/>'
+      +'<path d="M10 18 Q23 '+(18-h*2)+' 36 18 Z" fill="#ffffff" stroke="#e2d6b8" stroke-width="1"/>'
+      +'<ellipse cx="23" cy="18" rx="16" ry="2.4" fill="#f6f0e2" stroke="#c9b890" stroke-width="1.2"/></svg>';
+  }
+  return '<div class="pg-photo wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div>'
+    +'<div class="corner tl">'+CORNER+'</div><div class="corner tr">'+CORNER+'</div>'
+    +'<div class="corner bl">'+CORNER+'</div><div class="corner br">'+CORNER+'</div>'
+    +'<div class="in">'
+    +'<div class="title-area">'
+    +'<div class="botany l">'+BOTANY+'</div><div class="botany r">'+BOTANY+'</div>'
     +'<div class="t-ttl-big">小鉢ランチ</div>'
-    +'<div class="t-price-row"><span class="t-price">¥1,600</span><span class="t-tax-ex">税抜 ¥1,455</span></div>'
+    +'<div class="t-price">¥1,600</div>'
+    +'<div class="t-tax">（税抜 ¥1,455）</div>'
     +'</div>'
-    +'<div class="sec"><span>盛り付け見本</span></div>'
+    +'<div class="ribbon">からだにやさしい、ほっとするごはん。</div>'
+    +'<div class="img-area">'
+    +'<div class="bubble">彩り小鉢が<br>うれしい、<br>バランスランチ</div>'
     +'<div class="img-wrap"><img src="'+img+'"></div>'
-    +'<div class="set-bar">サラダ ／ 本日の小鉢 五種 ／ 味噌汁 ／ ごはん 付き</div>'
-    +'<div class="sec"><span>ごはんの量をお選びください</span></div>'
+    +'</div>'
+    +'<div class="set-sec">'
+    +'<div class="set-ttl"><span class="dash"></span><span>セット内容</span><span class="dash"></span></div>'
+    +'<div class="set-bar">サラダ ／ 本日の小鉢 5種 ／ 味噌汁 ／ ごはん付き</div>'
+    +'</div>'
+    +'<div class="rice-head"><span>ごはんの量をお選びください</span></div>'
     +'<div class="rice-row">'
-    +'<div class="rc"><div class="rc-n">少なめ</div></div>'
-    +'<div class="rc"><div class="rc-n">ふつう</div></div>'
-    +'<div class="rc"><div class="rc-n">大盛り</div><div class="rc-p">＋¥200</div></div>'
-    +'<div class="rc"><div class="rc-n">おかわり</div><div class="rc-p">＋¥200</div></div>'
+    +'<div class="rc"><div class="rc-n">少なめ</div>'+bowl(1)+'<div class="rc-cmt">軽やかに♪</div></div>'
+    +'<div class="rc"><div class="rc-n">ふつう</div>'+bowl(2)+'<div class="rc-cmt">ちょうどいい<br>定番サイズ！</div></div>'
+    +'<div class="rc"><div class="rc-n">大盛り</div>'+bowl(3)+'<div class="rc-p">＋¥200</div><div class="rc-cmt">しっかり食べたい<br>方に◎</div></div>'
+    +'<div class="rc"><div class="rc-n">おかわり</div>'+bowl(4)+'<div class="rc-p">＋¥200</div><div class="rc-cmt">まだ食べたい！<br>そんな方に♪</div></div>'
     +'</div>'
     +'</div></div>';
+}
+
+// 5弁の黄色い小花（草花スプレー用）
+function flowerSVG(cx,cy){
+  let p='<g>';
+  for(let i=0;i<5;i++){
+    const a=i*72*Math.PI/180;
+    const px=cx+Math.cos(a)*4.5, py=cy+Math.sin(a)*4.5;
+    p+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="3" fill="#e9c84a"/>';
+  }
+  p+='<circle cx="'+cx+'" cy="'+cy+'" r="2.4" fill="#d99b2b"/></g>';
+  return p;
 }
 
 /* ── 2枚目：お品書き（毎日差し替え・大きく濃く） ── */

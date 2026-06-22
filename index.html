@@ -154,7 +154,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 
 /* メイン一覧 */
 .pg-osh .ml{display:flex;flex-direction:column;flex:1;padding:0 1%}
-.pg-osh .mln{display:grid;grid-template-columns:48px 1px 1fr auto;column-gap:16px;align-items:center;padding:2.1% 0;border-bottom:1px solid rgba(74,88,54,.20)}
+.pg-osh .mln{display:grid;grid-template-columns:auto 1fr auto;column-gap:14px;align-items:center;padding:2.1% 0;border-bottom:1px solid rgba(74,88,54,.20)}
 .pg-osh .mln:last-child{border-bottom:none}
 .pg-osh .m-id{font-family:var(--serif);font-size:33px;font-weight:800;color:var(--olive);line-height:1;text-align:center}
 .pg-osh .m-div{width:1px;align-self:stretch;background:rgba(74,88,54,.30);margin:4px 0}
@@ -163,6 +163,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .pg-osh .m-ds{font-size:14.5px;color:var(--ink);letter-spacing:.02em;line-height:1.55;font-weight:500}
 .pg-osh .m-ds:empty{display:none}
 .pg-osh .m-flower{flex-shrink:0;opacity:.85;padding-left:6px}
+.pg-osh .m-flower-l{flex-shrink:0;opacity:.85;padding-right:6px}
 /* 説明内の【…】行を囲みボックスに（例：ソースを3種類からお選びください） */
 .pg-osh .m-callout{grid-column:1 / -1;margin-top:6px;border:1px solid var(--gold-soft);border-radius:8px;background:rgba(255,255,255,.5);padding:7px 12px;text-align:center}
 .pg-osh .m-callout .c-ttl{font-size:13px;color:var(--olive-d);letter-spacing:.05em;font-weight:700;margin-bottom:2px}
@@ -770,8 +771,7 @@ function buildOshHTML(kobArr, mainsArr, note){
     });
     const desc=descLines.join('<br>');
     return '<div class="mln">'
-      +'<div class="m-id">'+esc(m.id)+'</div>'
-      +'<div class="m-div"></div>'
+      +'<div class="m-flower-l">'+FLOWER+'</div>'
       +'<div class="m-body"><div class="m-nm">'+esc(m.name).replace(/\n/g,'<br>')+'</div><div class="m-ds">'+desc+'</div>'+callout+'</div>'
       +'<div class="m-flower">'+FLOWER+'</div>'
       +'</div>';

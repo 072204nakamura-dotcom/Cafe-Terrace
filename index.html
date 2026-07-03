@@ -945,6 +945,7 @@ function copyFrom(id){
       if(snap){m.name=snap.name||'';m.desc=snap.desc||''}
     });
     save(MAIN_KEY,mains);
+    buildMainEdit(); // 編集欄の表示も復元内容に更新（これがないと古い表示のまま保存で上書きされる）
     render();
   }
   switchTab('edit');toast('📋 '+(r.dateDisp||r.date)+' を読み込みました');

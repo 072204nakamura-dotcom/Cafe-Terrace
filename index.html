@@ -52,7 +52,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .main-edit-id{width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;font-family:var(--serif);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .main-edit input[type=text],.main-edit textarea{width:100%;border:1px solid rgba(0,0,0,0.14);border-radius:6px;padding:7px 9px;font-family:var(--serif);font-size:13px;color:var(--ink);outline:none;background:#fff;margin-bottom:6px;resize:vertical;line-height:1.55}
 .main-edit input:focus,.main-edit textarea:focus{border-color:var(--teal)}
-.main-edit input.mname{font-weight:700}
+.main-edit textarea.mname{font-weight:700;line-height:1.5;min-height:38px}
 .photo-slot{position:relative;border:1.5px dashed var(--teal-m);border-radius:9px;background:var(--teal-l);overflow:hidden;margin-top:4px}
 .photo-slot.has-img{border-style:solid;border-color:var(--teal)}
 .photo-slot label{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 10px;cursor:pointer;color:var(--teal-d);font-family:var(--serif);font-size:12px;gap:5px;text-align:center}
@@ -527,7 +527,7 @@ function buildMainEdit(){
     d.innerHTML=
       '<div class="main-edit-hd">'
       +'<span class="main-edit-id">'+(m.id||String.fromCharCode(65+i))+'</span>'
-      +'<input type="text" class="mname" id="mn'+i+'" value="'+esc(m.name)+'" placeholder="料理名（空にすると印刷に出ません）" oninput="syncMains();render()">'
+      +'<textarea class="mname" id="mn'+i+'" placeholder="料理名（改行できます・空にすると印刷に出ません）" rows="1" style="flex:1;resize:none;overflow:hidden" oninput="syncMains();render();this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'">'+esc(m.name)+'</textarea>'
       +'</div>'
       +'<textarea id="md'+i+'" placeholder="説明文（改行も反映されます）" oninput="syncMains();render()" rows="2">'+esc(m.desc)+'</textarea>';
     w.appendChild(d);
@@ -997,7 +997,7 @@ function openEditModal(id){
     r.mainsSnap.forEach((m,i)=>{
       html+='<div class="edit-main">'
         +'<div class="edit-main-hd"><div class="edit-main-id">'+(m.id||String.fromCharCode(65+i))+'</div></div>'
-        +'<input type="text" id="ed-main-nm-'+i+'" value="'+esc(m.name||'')+'" placeholder="料理名">'
+        +'<textarea id="ed-main-nm-'+i+'" placeholder="料理名（改行できます）" rows="1" style="resize:none;overflow:hidden" oninput="this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'">'+esc(m.name||'')+'</textarea>'
         +'<textarea id="ed-main-ds-'+i+'" rows="3" placeholder="説明文（改行可）">'+esc(m.desc||'')+'</textarea>'
         +'</div>';
     });

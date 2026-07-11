@@ -225,6 +225,9 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   #print-host .wash{background:#faf3e4!important}
   /* 極薄の格子テクスチャは印刷エンジンが誤描画して金色の縞模様になるため印刷では消す */
   #print-host .tex{display:none!important}
+  /* iOS(iPhone/iPad)のSafariは印刷時にヘッダー・フッター分の余白を強制確保するため、
+     A4いっぱい(296mm)だと必ず2ページ目にあふれる。iOSのみ紙面を275mmに縮めて1ページに収める */
+  html.ios #print-host .pg{height:275mm}
   .toast,.edit-overlay{display:none!important}
 }
 /* ─ 編集モーダル ─ */
@@ -1122,6 +1125,11 @@ function printHist(id){
   toast('🖨 '+(r.dateDisp||r.date)+' のお品書きを印刷します');
 }
 
+// iOS(iPhone/iPad)判定：印刷時のページ高さ調整用にhtmlタグへ .ios クラスを付与
+// （iPadは近年"Mac"を名乗るためタッチ対応も併せて判定する）
+if(/iP(hone|od|ad)/.test(navigator.userAgent)||(navigator.userAgent.indexOf('Mac')>=0&&'ontouchend' in document)){
+  document.documentElement.classList.add('ios');
+}
 buildKobEdit();buildMainEdit();buildManEdit();setDate();render();
 // 起動時にクラウドからデータを取得して合成（画面表示後に実行）
 if(GAS_URL)setTimeout(()=>loadFromGAS(true),1000);

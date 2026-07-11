@@ -75,7 +75,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .a4{width:100%;aspect-ratio:210/297;border-radius:6px;overflow:hidden;box-shadow:0 6px 28px rgba(80,40,10,0.14);margin-bottom:14px;position:relative;background:#fff}
 
 /* 共通 和紙背景 */
-.wash{background:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%);position:relative;overflow:hidden}
+.wash{background-color:#faf3e4;background-image:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%);position:relative;overflow:hidden}
 .wash .tex{position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px)}
 .wash .f1{position:absolute;top:3%;left:2.4%;right:2.4%;bottom:3%;border:1.5px solid var(--gold-line);pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:-13px -13px,calc(100% + 13px) -13px,-13px calc(100% + 13px),calc(100% + 13px) calc(100% + 13px)}
 .wash .f2{position:absolute;top:3.7%;left:3%;right:3%;bottom:3.7%;border:0.8px solid var(--gold-soft);pointer-events:none}
@@ -217,8 +217,14 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   .wrap{display:none!important}
   #print-host{display:block!important;background:#fff!important;color-scheme:light!important}
   #print-host *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-scheme:light!important;forced-color-adjust:none!important}
-  #print-host .pg{width:210mm;height:297mm;page-break-after:always;overflow:hidden;position:relative}
+  /* 高さは297mmちょうどだと端末の丸め誤差で2ページ目にはみ出すため296mmに */
+  #print-host .pg{width:210mm;height:296mm;page-break-after:always;overflow:hidden;position:relative;background:#faf3e4!important}
   #print-host .pg:last-child{page-break-after:auto}
+  /* iOS印刷対策：グラデーション背景は描画に失敗すると透明になり、
+     ダークモード端末では黒く印刷されるため、印刷時は単色ベタ塗りに固定する */
+  #print-host .wash{background:#faf3e4!important}
+  /* 極薄の格子テクスチャは印刷エンジンが誤描画して金色の縞模様になるため印刷では消す */
+  #print-host .tex{display:none!important}
   .toast,.edit-overlay{display:none!important}
 }
 /* ─ 編集モーダル ─ */

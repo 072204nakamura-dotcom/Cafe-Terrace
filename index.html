@@ -53,6 +53,12 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .main-edit input[type=text],.main-edit textarea{width:100%;border:1px solid rgba(0,0,0,0.14);border-radius:6px;padding:7px 9px;font-family:var(--serif);font-size:13px;color:var(--ink);outline:none;background:#fff;margin-bottom:6px;resize:vertical;line-height:1.55}
 .main-edit input:focus,.main-edit textarea:focus{border-color:var(--teal)}
 .main-edit textarea.mname{font-weight:700;line-height:1.5;min-height:38px}
+/* 番号ドラッグ調整エリア */
+.mark-stage{position:relative;display:inline-block;max-width:100%;border-radius:8px;overflow:hidden;background:#eee;line-height:0;touch-action:none}
+.mark-stage img{max-width:100%;display:block}
+#mark-layer{position:absolute;inset:0}
+.mk-h{position:absolute;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(58,38,18,.85);color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:grab;touch-action:none;user-select:none}
+.mk-h:active{cursor:grabbing;transform:translate(-50%,-50%) scale(1.15);background:#2a5c3f}
 .photo-slot{position:relative;border:1.5px dashed var(--teal-m);border-radius:9px;background:var(--teal-l);overflow:hidden;margin-top:4px}
 .photo-slot.has-img{border-style:solid;border-color:var(--teal)}
 .photo-slot label{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 10px;cursor:pointer;color:var(--teal-d);font-family:var(--serif);font-size:12px;gap:5px;text-align:center}
@@ -73,9 +79,11 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .btn-sm:disabled{opacity:.28;cursor:default;pointer-events:none}
 .preview-cap{font-family:var(--serif);font-size:11px;color:var(--brown-l);letter-spacing:.16em;text-align:center;margin:18px 0 10px}
 .a4{width:100%;aspect-ratio:210/297;border-radius:6px;overflow:hidden;box-shadow:0 6px 28px rgba(80,40,10,0.14);margin-bottom:14px;position:relative;background:#fff}
+/* プレビューは印刷実寸(794×1123px)で描画し、transformで縮小表示（印刷と完全一致させる） */
+.a4-fit{width:794px;height:1123px;position:absolute;top:0;left:0;transform-origin:top left}
 
 /* 共通 和紙背景 */
-.wash{background-color:#faf3e4;background-image:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%);position:relative;overflow:hidden}
+.wash{background:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%);position:relative;overflow:hidden}
 .wash .tex{position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px)}
 .wash .f1{position:absolute;top:3%;left:2.4%;right:2.4%;bottom:3%;border:1.5px solid var(--gold-line);pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:-13px -13px,calc(100% + 13px) -13px,-13px calc(100% + 13px),calc(100% + 13px) calc(100% + 13px)}
 .wash .f2{position:absolute;top:3.7%;left:3%;right:3%;bottom:3.7%;border:0.8px solid var(--gold-soft);pointer-events:none}
@@ -110,7 +118,10 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 /* 写真＋左の吹き出し */
 .pg-photo .img-area{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;margin-bottom:2.5%}
 .pg-photo .img-wrap{max-width:100%;max-height:100%;display:flex}
-.pg-photo .img-wrap img{max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 5px 18px rgba(40,20,5,.28);border:3px solid #fff;outline:1.5px solid var(--line-d)}
+.pg-photo .img-box{position:relative;display:inline-flex;max-width:100%;max-height:100%}
+.pg-photo .img-box img{max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 5px 18px rgba(40,20,5,.28);border:3px solid #fff;outline:1.5px solid var(--line-d)}
+/* 写真に重ねる①〜⑤の番号 */
+.pg-photo .mk{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:rgba(58,38,18,.82);color:#fff;font-family:var(--serif);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:2}
 .pg-photo .bubble{position:absolute;top:2%;left:-1%;z-index:4;background:#fff;border:1.5px solid var(--gold-line);border-radius:46% 54% 52% 48%/52% 48% 52% 48%;padding:13px 17px;font-size:13.5px;font-weight:700;color:#6e5230;line-height:1.55;text-align:center;box-shadow:0 3px 10px rgba(40,20,5,.12)}
 .pg-photo .bubble::after{content:'';position:absolute;bottom:-9px;left:30px;width:14px;height:14px;background:#fff;border-right:1.5px solid var(--gold-line);border-bottom:1.5px solid var(--gold-line);transform:rotate(40deg)}
 
@@ -172,6 +183,40 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 /* 本日のひとこと */
 .pg-osh .note{text-align:center;font-size:14.5px;color:var(--ink);letter-spacing:.06em;padding:1% 5%;margin:.5% 0 1.5%;line-height:1.6;font-weight:600;font-style:italic}
 
+/* ═══ 自動フィット：内容が多い日だけ段階的に圧縮して必ずA4一枚に収める ═══ */
+/* 段階1 */
+.pg-osh.dense .kob-list{row-gap:2.2%;margin-bottom:3%}
+.pg-osh.dense .kl{padding:2.4% 4%}
+.pg-osh.dense .kl-t{font-size:17px}
+.pg-osh.dense .sec-pick{padding:1.8% 4%;margin-bottom:2.4%}
+.pg-osh.dense .sec-pick .t-txt{font-size:21px}
+.pg-osh.dense .mln{padding:1.5% 0}
+.pg-osh.dense .m-nm{font-size:17.5px}
+.pg-osh.dense .m-ds{font-size:13px;line-height:1.45}
+.pg-osh.dense .m-callout{padding:5px 12px;margin-top:4px}
+.pg-osh.dense .m-callout .c-items{font-size:14px}
+.pg-osh.dense .note{font-size:13px;margin:.3% 0 1%}
+/* 段階2 */
+.pg-osh.denser .kob-list{row-gap:1.8%;margin-bottom:2.4%}
+.pg-osh.denser .kl{padding:1.9% 3.5%}
+.pg-osh.denser .kl-t{font-size:15.5px}
+.pg-osh.denser .kl-n{width:29px;height:29px;font-size:14px}
+.pg-osh.denser .sec-pick .t-txt{font-size:19px}
+.pg-osh.denser .mln{padding:1.1% 0}
+.pg-osh.denser .m-nm{font-size:16px}
+.pg-osh.denser .m-ds{font-size:12px;line-height:1.4}
+.pg-osh.denser .m-callout{padding:4px 10px}
+.pg-osh.denser .m-callout .c-items{font-size:13px}
+/* 段階3（最終手段） */
+.pg-osh.densest .osh-ttl .t-txt{font-size:24px}
+.pg-osh.densest .kob-list{row-gap:1.5%;margin-bottom:2%}
+.pg-osh.densest .kl-t{font-size:14px}
+.pg-osh.densest .mln{padding:.8% 0}
+.pg-osh.densest .m-nm{font-size:14.5px}
+.pg-osh.densest .m-ds{font-size:11px;line-height:1.35}
+.pg-osh.densest .m-callout .c-items{font-size:12px}
+.pg-osh.densest .note{font-size:11.5px}
+
 /* マニュアル */
 .pg-man{width:100%;height:100%;font-family:var(--serif);color:var(--ink)}
 .pg-man .in{position:absolute;top:5%;left:5%;right:5%;bottom:5%;display:flex;flex-direction:column}
@@ -217,17 +262,8 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   .wrap{display:none!important}
   #print-host{display:block!important;background:#fff!important;color-scheme:light!important}
   #print-host *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-scheme:light!important;forced-color-adjust:none!important}
-  /* 高さは297mmちょうどだと端末の丸め誤差で2ページ目にはみ出すため296mmに */
-  #print-host .pg{width:210mm;height:296mm;page-break-after:always;overflow:hidden;position:relative;background:#faf3e4!important}
+  #print-host .pg{width:210mm;height:297mm;page-break-after:always;overflow:hidden;position:relative}
   #print-host .pg:last-child{page-break-after:auto}
-  /* iOS印刷対策：グラデーション背景は描画に失敗すると透明になり、
-     ダークモード端末では黒く印刷されるため、印刷時は単色ベタ塗りに固定する */
-  #print-host .wash{background:#faf3e4!important}
-  /* 極薄の格子テクスチャは印刷エンジンが誤描画して金色の縞模様になるため印刷では消す */
-  #print-host .tex{display:none!important}
-  /* iOS(iPhone/iPad)のSafariは印刷時にヘッダー・フッター分の余白を強制確保するため、
-     A4いっぱい(296mm)だと必ず2ページ目にあふれる。iOSのみ紙面を275mmに縮めて1ページに収める */
-  html.ios #print-host .pg{height:275mm}
   .toast,.edit-overlay{display:none!important}
 }
 /* ─ 編集モーダル ─ */
@@ -311,6 +347,15 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
         </label>
       </div>
       <div class="note-warn">写真ページ（1枚目）は盛り付け変更時のみ差し替え、毎日の印刷は2枚目（お品書き）だけでOKという運用です。</div>
+    </div>
+    <div class="card" id="mark-card">
+      <div class="sec-lbl">🔢 小鉢の番号の位置（写真の上でドラッグして動かせます）</div>
+      <div class="mark-stage" id="mark-stage">
+        <img id="mark-img" src="">
+        <div id="mark-layer"></div>
+      </div>
+      <div class="note-warn">①〜⑤を小鉢の上にドラッグしてください。位置は自動保存され、印刷にも反映されます。</div>
+      <button class="btn btn-sub" style="width:100%;margin-top:8px" onclick="resetMarks()">↺ 番号の位置を初期化</button>
     </div>
     <div class="card">
       <div class="sec-lbl">📝 本日のひとこと（2枚目に印刷）</div>
@@ -420,6 +465,12 @@ catch(e){manuals=null}
 if(!Array.isArray(manuals)) manuals=[];
 
 let zenImg='';
+// 写真上の①〜⑤番号の位置（%指定）。写真ごとにドラッグで調整して保存する。
+const MARK_KEY='cafe_teri_v2_markers';
+const DEFAULT_MARKS=[{x:46,y:22},{x:58,y:20},{x:70,y:24},{x:76,y:40},{x:74,y:58}];
+let marks;
+try{marks=JSON.parse(localStorage.getItem(MARK_KEY))}catch(e){marks=null}
+if(!Array.isArray(marks)||marks.length!==5) marks=JSON.parse(JSON.stringify(DEFAULT_MARKS));
 function ls(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){alert('保存容量がいっぱいです。')}}
 
@@ -444,8 +495,15 @@ function syncBadge(status){
 
 function mergeById(arrA,arrB){
   const map=new Map();
-  [...arrB,...arrA].forEach(r=>{if(r&&r.id!=null)map.set(r.id,r)});
-  return [...map.values()].sort((x,y)=>(y.id||0)-(x.id||0));
+  [...arrB,...arrA].forEach(r=>{
+    if(!r||r.id==null)return;
+    const prev=map.get(r.id);
+    // 同じIDが両方にある場合、ts（更新時刻）が新しい方を採用（メイン同期用）
+    if(prev&&prev.ts&&r.ts&&prev.ts>r.ts)return;
+    map.set(r.id,r);
+  });
+  const num=v=>typeof v==='number'?v:0; // '__mains__'などの特殊IDは末尾へ
+  return [...map.values()].sort((x,y)=>num(y.id)-num(x.id));
 }
 
 // GASへ献立データを送信（no-cors、レスポンス読めないが届く）
@@ -477,6 +535,17 @@ async function loadFromGAS(silent){
       const local=ls(KOB_KEY,[]);
       const merged=mergeById(json.data,local);
       save(KOB_KEY,merged);
+      // メイン同期：クラウド側のメニューが新しければこの端末にも反映
+      const mrec=merged.find(r=>r&&r.id==='__mains__');
+      if(mrec&&mrec.ts>mainsTs&&Array.isArray(mrec.mainsData)&&mrec.mainsData.length){
+        mains.forEach((m,i)=>{
+          const c=mrec.mainsData[i];
+          if(c){m.name=c.name||'';m.desc=c.desc||''}
+        });
+        save(MAIN_KEY,mains);
+        mainsTs=mrec.ts;localStorage.setItem(MAIN_TS_KEY,mainsTs);
+        buildMainEdit();render();
+      }
       // GASが空でローカルにデータがある場合は書き戻す
       if(json.data.length===0&&local.length>0){
         pushToGAS(local);
@@ -542,7 +611,18 @@ function buildMainEdit(){
     w.appendChild(d);
   });
 }
-function saveMains(){syncMains();save(MAIN_KEY,mains);toast('✅ メニューを保存しました')}
+const MAIN_TS_KEY='cafe_teri_v2_mains_ts';
+let mainsTs=+(localStorage.getItem(MAIN_TS_KEY)||0);
+function saveMains(){
+  syncMains();save(MAIN_KEY,mains);
+  // クラウド同期：メインを特殊レコード(__mains__)として履歴データに相乗りさせる
+  mainsTs=Date.now();localStorage.setItem(MAIN_TS_KEY,mainsTs);
+  let s=ls(KOB_KEY,[]).filter(r=>r&&r.id!=='__mains__');
+  s.push({id:'__mains__',ts:mainsTs,mainsData:mains.map(m=>({id:m.id,name:m.name||'',desc:m.desc||''}))});
+  save(KOB_KEY,s);
+  pushToGAS(s.map(r=>({...r,zenImg:r.zenImg?'[image]':''})));
+  toast('✅ メニューを保存しました');
+}
 
 // ═══ 盛り付け手順マニュアル（manuals）の編集 ═══
 let manDragSrc=null;
@@ -653,12 +733,60 @@ function onPhoto(ev){
   compress(f,d=>{zenImg=d;
     const s=document.getElementById('slot-zen');s.classList.add('has-img');
     document.getElementById('lbl-zen').innerHTML='<img src="'+d+'"><input type="file" accept="image/*" onchange="onPhoto(event)">';
-    render();});
+    buildMarkEditor();render();});
 }
 function clearPhoto(){
   zenImg='';const s=document.getElementById('slot-zen');s.classList.remove('has-img');
   document.getElementById('lbl-zen').innerHTML='<span class="pi">📷</span><span>タップして全体像の写真を選ぶ／撮影</span><input type="file" accept="image/*" onchange="onPhoto(event)">';
-  render();
+  buildMarkEditor();render();
+}
+
+// ═══ 写真上の①〜⑤番号をドラッグで配置 ═══
+function buildMarkEditor(){
+  const card=document.getElementById('mark-card');
+  const img=document.getElementById('mark-img');
+  const layer=document.getElementById('mark-layer');
+  if(!card||!img||!layer)return;
+  const src=zenImg||DEFAULT_IMG;
+  if(!src){card.style.display='none';return;}
+  card.style.display='';
+  img.src=src;
+  layer.innerHTML=marks.map((p,i)=>
+    '<div class="mk-h" data-i="'+i+'" style="left:'+p.x+'%;top:'+p.y+'%">'+(i+1)+'</div>'
+  ).join('');
+  layer.querySelectorAll('.mk-h').forEach(el=>{
+    el.addEventListener('pointerdown',startDragMark);
+  });
+}
+function startDragMark(e){
+  e.preventDefault();
+  const el=e.currentTarget;
+  const i=+el.dataset.i;
+  const stage=document.getElementById('mark-stage');
+  const move=ev=>{
+    const r=stage.getBoundingClientRect();
+    let x=(ev.clientX-r.left)/r.width*100;
+    let y=(ev.clientY-r.top)/r.height*100;
+    x=Math.max(0,Math.min(100,x)); y=Math.max(0,Math.min(100,y));
+    marks[i]={x:+x.toFixed(1),y:+y.toFixed(1)};
+    el.style.left=marks[i].x+'%'; el.style.top=marks[i].y+'%';
+    render(); // 印刷プレビューにも即反映
+  };
+  const up=()=>{
+    window.removeEventListener('pointermove',move);
+    window.removeEventListener('pointerup',up);
+    window.removeEventListener('pointercancel',up);
+    save(MARK_KEY,marks); // ドラッグ終了時に保存
+  };
+  window.addEventListener('pointermove',move);
+  window.addEventListener('pointerup',up);
+  window.addEventListener('pointercancel',up);
+}
+function resetMarks(){
+  marks=JSON.parse(JSON.stringify(DEFAULT_MARKS));
+  save(MARK_KEY,marks);
+  buildMarkEditor();render();
+  toast('↺ 番号の位置を初期化しました');
 }
 function getKob(){return [0,1,2,3,4].map(i=>{const e=document.getElementById('k'+i);return e?e.value.replace(/^\n+|\n+$/g,'').trim():''})}
 function setKob(a){for(let i=0;i<5;i++){const e=document.getElementById('k'+i);if(e){e.value=(a&&a[i])||'';autoGrowKob(e);}}}
@@ -710,7 +838,9 @@ function photoPageHTML(){
     +'<div class="ribbon">からだにやさしい、ほっとするごはん。</div>'
     +'<div class="img-area">'
     +'<div class="bubble">彩り小鉢が<br>うれしい、<br>バランスランチ</div>'
-    +'<div class="img-wrap"><img src="'+img+'"></div>'
+    +'<div class="img-wrap"><div class="img-box"><img src="'+img+'">'
+    + marks.map((p,i)=>'<span class="mk" style="left:'+p.x+'%;top:'+p.y+'%">'+(i+1)+'</span>').join('')
+    +'</div></div>'
     +'</div>'
     +'<div class="set-sec">'
     +'<div class="set-ttl"><span class="dash"></span><span>セット内容</span><span class="dash"></span></div>'
@@ -849,11 +979,29 @@ function manPages(){
 // 後方互換（1ページ目のみ返す）
 function manPageHTML(){ return manPages()[0]; }
 
-function render(){
-  const a=document.getElementById('pv-photo');if(a)a.innerHTML=photoPageHTML();
-  const b=document.getElementById('pv-osh');if(b)b.innerHTML=oshPageHTML();
-  const c=document.getElementById('pv-man');if(c)c.innerHTML=manPages().map(p=>'<div class="a4">'+p+'</div>').join('');
+// お品書きがA4に収まらない場合、段階的に圧縮クラスを付けて必ず収める
+function fitOsh(root){
+  (root||document).querySelectorAll('.pg-osh').forEach(pg=>{
+    pg.classList.remove('dense','denser','densest');
+    const b=pg.querySelector('.body');if(!b)return;
+    for(const lv of ['dense','denser','densest']){
+      if(b.scrollHeight<=b.clientHeight+2)break;
+      pg.classList.add(lv);
+    }
+  });
 }
+// プレビューを印刷実寸(794px)で描画してから縮小表示（折り返し・収まりが印刷と完全一致）
+function renderA4(el,html){
+  el.innerHTML='<div class="a4-fit">'+html+'</div>';
+  const s=el.clientWidth/794;
+  el.firstChild.style.transform='scale('+s+')';
+}
+function render(){
+  const a=document.getElementById('pv-photo');if(a)renderA4(a,photoPageHTML());
+  const b=document.getElementById('pv-osh');if(b){renderA4(b,oshPageHTML());fitOsh(b)}
+  const c=document.getElementById('pv-man');if(c)c.innerHTML=manPages().map(p=>'<div class="a4"><div class="a4-fit" style="transform:scale('+(c.clientWidth/794)+')">'+p+'</div></div>').join('');
+}
+window.addEventListener('resize',()=>{clearTimeout(window.__rzT);window.__rzT=setTimeout(render,200)});
 function switchTab(t){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -878,9 +1026,12 @@ function saveRecord(){
     savedAt:new Date().toLocaleString('ja-JP')
   };
   if(!rec.date){alert('日付を入力してください');return}
-  let s=ls(KOB_KEY,[]);s.unshift(rec);
+  let s=ls(KOB_KEY,[]);
+  const pseudo=s.filter(r=>r&&r.id==='__mains__'); // メイン同期用レコードは保護
+  s=s.filter(r=>r&&r.id!=='__mains__');
+  s.unshift(rec);
   s.forEach((r,i)=>{if(i>=5)r.zenImg=''});
-  const trimmed=s.slice(0,90); // 90日分まで保持
+  const trimmed=s.slice(0,90).concat(pseudo); // 90日分まで保持＋メイン同期レコード
   save(KOB_KEY,trimmed);
   toast('✅ 保存しました');
   // クラウド同期：写真を抜いた軽量版を送る（Drive保存は次段階）
@@ -889,7 +1040,7 @@ function saveRecord(){
 let histSearchQ='';
 let histExpanded={};
 function renderHist(){
-  const s=ls(KOB_KEY,[]);
+  const s=ls(KOB_KEY,[]).filter(r=>r&&r.id!=='__mains__');
   const list=document.getElementById('hist-list');
   if(!s.length){
     list.innerHTML='<div class="hist-empty">まだ保存された献立がありません🌿<br>「本日の献立」タブで保存すると<br>ここに積み上がります</div>';
@@ -947,6 +1098,7 @@ function copyFrom(id){
   if(zenImg){const s=document.getElementById('slot-zen');s.classList.add('has-img');
     document.getElementById('lbl-zen').innerHTML='<img src="'+zenImg+'"><input type="file" accept="image/*" onchange="onPhoto(event)">';}
   else clearPhoto();
+  buildMarkEditor();
   // お品書きのメイン料理も復元するか確認
   if(r.mainsSnap&&r.mainsSnap.length&&confirm('この日のメイン料理（お品書き）も一緒に復元しますか？')){
     mains.forEach((m,i)=>{
@@ -1097,7 +1249,7 @@ function doPrint(pages){
   host.innerHTML=pages.map(p=>'<div class="pg">'+p+'</div>').join('');
 
   let done=false; // 印刷ダイアログが二重に出るのを防ぐ
-  const go=()=>{ if(done)return; done=true; try{window.print();}catch(e){toast('⚠️ 印刷を開始できませんでした');} };
+  const go=()=>{ if(done)return; done=true; fitOsh(host); try{window.print();}catch(e){toast('⚠️ 印刷を開始できませんでした');} };
   // レイアウト確定（2フレーム）を待ってから印刷ダイアログを出す
   const fire=()=>requestAnimationFrame(()=>requestAnimationFrame(go));
   // フォント読み込み完了を待つ（本体で読込済みのため通常は即時）
@@ -1125,12 +1277,7 @@ function printHist(id){
   toast('🖨 '+(r.dateDisp||r.date)+' のお品書きを印刷します');
 }
 
-// iOS(iPhone/iPad)判定：印刷時のページ高さ調整用にhtmlタグへ .ios クラスを付与
-// （iPadは近年"Mac"を名乗るためタッチ対応も併せて判定する）
-if(/iP(hone|od|ad)/.test(navigator.userAgent)||(navigator.userAgent.indexOf('Mac')>=0&&'ontouchend' in document)){
-  document.documentElement.classList.add('ios');
-}
-buildKobEdit();buildMainEdit();buildManEdit();setDate();render();
+buildKobEdit();buildMainEdit();buildManEdit();buildMarkEditor();setDate();render();
 // 起動時にクラウドからデータを取得して合成（画面表示後に実行）
 if(GAS_URL)setTimeout(()=>loadFromGAS(true),1000);
 </script>

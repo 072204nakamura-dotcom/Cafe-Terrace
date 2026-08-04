@@ -770,13 +770,14 @@ function startDragMark(e){
     x=Math.max(0,Math.min(100,x)); y=Math.max(0,Math.min(100,y));
     marks[i]={x:+x.toFixed(1),y:+y.toFixed(1)};
     el.style.left=marks[i].x+'%'; el.style.top=marks[i].y+'%';
-    render(); // 印刷プレビューにも即反映
+    // ドラッグ中は番号だけ動かす（全再描画はiPhoneで重くクラッシュの原因になるため終了時のみ）
   };
   const up=()=>{
     window.removeEventListener('pointermove',move);
     window.removeEventListener('pointerup',up);
     window.removeEventListener('pointercancel',up);
     save(MARK_KEY,marks); // ドラッグ終了時に保存
+    render(); // プレビューへの反映も終了時に1回だけ
   };
   window.addEventListener('pointermove',move);
   window.addEventListener('pointerup',up);
@@ -996,12 +997,23 @@ function renderA4(el,html){
   const s=el.clientWidth/794;
   el.firstChild.style.transform='scale('+s+')';
 }
+let __pvPhotoSig=''; // 写真ページは重いので、内容が変わった時だけ再描画する
 function render(){
-  const a=document.getElementById('pv-photo');if(a)renderA4(a,photoPageHTML());
+  const a=document.getElementById('pv-photo');
+  if(a){
+    const sig=(zenImg?zenImg.length:0)+':'+JSON.stringify(marks);
+    if(sig!==__pvPhotoSig){renderA4(a,photoPageHTML());__pvPhotoSig=sig;}
+  }
   const b=document.getElementById('pv-osh');if(b){renderA4(b,oshPageHTML());fitOsh(b)}
   const c=document.getElementById('pv-man');if(c)c.innerHTML=manPages().map(p=>'<div class="a4"><div class="a4-fit" style="transform:scale('+(c.clientWidth/794)+')">'+p+'</div></div>').join('');
 }
-window.addEventListener('resize',()=>{clearTimeout(window.__rzT);window.__rzT=setTimeout(render,200)});
+// 横幅が変わった時だけ再描画（iPhoneはスクロールだけで縦resizeが頻発し、クラッシュの原因になるため）
+window.__lastW=window.innerWidth;
+window.addEventListener('resize',()=>{
+  if(window.innerWidth===window.__lastW)return;
+  window.__lastW=window.innerWidth;
+  clearTimeout(window.__rzT);window.__rzT=setTimeout(()=>{__pvPhotoSig='';render()},250);
+});
 function switchTab(t){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));

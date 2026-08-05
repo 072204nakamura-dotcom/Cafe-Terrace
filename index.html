@@ -84,7 +84,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 
 /* 共通 和紙背景 */
 .wash{background:linear-gradient(160deg,#fdf9f0 0%,#f6edd8 60%,#fdf9f0 100%);position:relative;overflow:hidden}
-.wash .tex{position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(139,101,60,0.025) 4px,rgba(139,101,60,0.025) 5px)}
+.wash .tex{position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5'%3E%3Cpath d='M0 4.5h5M4.5 0v5' stroke='rgba(139,101,60,0.05)' stroke-width='1'/%3E%3C/svg%3E");background-repeat:repeat}
 .wash .f1{position:absolute;top:3%;left:2.4%;right:2.4%;bottom:3%;border:1.5px solid var(--gold-line);pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cg fill='%23c6a45c'%3E%3Cpath d='M13 1 L14.6 11.4 L25 13 L14.6 14.6 L13 25 L11.4 14.6 L1 13 L11.4 11.4 Z'/%3E%3C/g%3E%3Cg fill='%23e9dcb6'%3E%3Cpath d='M13 5 L13.9 12.1 L21 13 L13.9 13.9 L13 21 L12.1 13.9 L5 13 L12.1 12.1 Z'/%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:-13px -13px,calc(100% + 13px) -13px,-13px calc(100% + 13px),calc(100% + 13px) calc(100% + 13px)}
 .wash .f2{position:absolute;top:3.7%;left:3%;right:3%;bottom:3.7%;border:0.8px solid var(--gold-soft);pointer-events:none}
 
@@ -979,6 +979,11 @@ function manPages(){
 }
 // 後方互換（1ページ目のみ返す）
 function manPageHTML(){ return manPages()[0]; }
+
+// 印刷が終わったら印刷用データを解放（iPhoneのメモリ節約）
+window.addEventListener('afterprint',()=>{
+  setTimeout(()=>{const h=document.getElementById('print-host');if(h)h.innerHTML=''},800);
+});
 
 // お品書きがA4に収まらない場合、段階的に圧縮クラスを付けて必ず収める
 function fitOsh(root){

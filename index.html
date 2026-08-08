@@ -773,7 +773,8 @@ function onPhoto(ev){
     document.getElementById('lbl-zen').innerHTML='<img src="'+d+'"><input type="file" accept="image/*" onchange="onPhoto(event)">';
     buildMarkEditor();render();});
 }
-function clearPhoto(){
+function clearPhoto(skipConfirm){
+  if(!skipConfirm&&zenImg&&!confirm('全体像の写真を削除しますか？'))return;
   zenImg='';const s=document.getElementById('slot-zen');s.classList.remove('has-img');
   document.getElementById('lbl-zen').innerHTML='<span class="pi">📷</span><span>タップして全体像の写真を選ぶ／撮影</span><input type="file" accept="image/*" onchange="onPhoto(event)">';
   buildMarkEditor();render();
@@ -1152,10 +1153,10 @@ function copyFrom(id){
   zenImg=r.zenImg||'';
   if(zenImg){const s=document.getElementById('slot-zen');s.classList.add('has-img');
     document.getElementById('lbl-zen').innerHTML='<img src="'+zenImg+'"><input type="file" accept="image/*" onchange="onPhoto(event)">';}
-  else clearPhoto();
+  else clearPhoto(true);
   buildMarkEditor();
   // お品書きのメイン料理も復元するか確認
-  if(r.mainsSnap&&r.mainsSnap.length&&confirm('この日のメイン料理（お品書き）も一緒に復元しますか？')){
+  if(r.mainsSnap&&r.mainsSnap.length){
     // 登録済みメニューは消さず、その日の表示状態を再現する
     mains.forEach(m=>m.on=false);
     r.mainsSnap.filter(sn=>sn&&sn.name&&sn.name.trim()).forEach(sn=>{

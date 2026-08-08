@@ -53,6 +53,18 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .main-edit input[type=text],.main-edit textarea{width:100%;border:1px solid rgba(0,0,0,0.14);border-radius:6px;padding:7px 9px;font-family:var(--serif);font-size:13px;color:var(--ink);outline:none;background:#fff;margin-bottom:6px;resize:vertical;line-height:1.55}
 .main-edit input:focus,.main-edit textarea:focus{border-color:var(--teal)}
 .main-edit textarea.mname{font-weight:700;line-height:1.5;min-height:38px}
+/* 表示/非表示スイッチ */
+.mn-sw{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.mn-sw input{display:none}
+.mn-sw-body{width:44px;height:24px;border-radius:12px;background:#c9c2b4;position:relative;transition:background .15s;flex-shrink:0}
+.mn-sw-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}
+.mn-sw input:checked+.mn-sw-body{background:#2a5c3f}
+.mn-sw input:checked+.mn-sw-body .mn-sw-knob{left:22px}
+.mn-sw-lbl{font-size:12px;font-weight:700;color:#7a6e5e;letter-spacing:.04em}
+.mn-sw input:checked~.mn-sw-lbl{color:#2a5c3f}
+.mn-del{margin-left:auto;width:28px;height:28px;border:1px solid rgba(140,60,40,.4);border-radius:50%;background:none;color:#a0522d;font-size:13px;cursor:pointer;flex-shrink:0}
+.main-edit.mn-off{opacity:.55}
+.main-edit.mn-off .mname,.main-edit.mn-off textarea{background:rgba(0,0,0,.03)}
 /* 番号ドラッグ調整エリア */
 .mark-stage{position:relative;display:inline-block;max-width:100%;border-radius:8px;overflow:hidden;background:#eee;line-height:0;touch-action:none}
 .mark-stage img{max-width:100%;display:block}
@@ -262,8 +274,8 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   .wrap{display:none!important}
   #print-host{display:block!important;background:#fff!important;color-scheme:light!important}
   #print-host *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-scheme:light!important;forced-color-adjust:none!important}
-  #print-host .pg{width:210mm;height:297mm;page-break-after:always;overflow:hidden;position:relative}
-  #print-host .pg:last-child{page-break-after:auto}
+  #print-host .pg{width:210mm;height:296mm;margin:0;box-sizing:border-box;page-break-after:always;break-after:page;overflow:hidden;position:relative}
+  #print-host .pg:last-child{page-break-after:auto;break-after:auto}
   .toast,.edit-overlay{display:none!important}
 }
 /* ─ 編集モーダル ─ */
@@ -440,14 +452,11 @@ const defaultMains=[
 let mains;
 try{mains=JSON.parse(localStorage.getItem(MAIN_KEY))||JSON.parse(JSON.stringify(defaultMains))}
 catch(e){mains=JSON.parse(JSON.stringify(defaultMains))}
-// 6種に満たない場合は標準メニューで自動補完（A〜Fを必ず揃える）
-if(!Array.isArray(mains)||mains.length<6){
-  const base=JSON.parse(JSON.stringify(defaultMains));
-  if(Array.isArray(mains)){
-    mains.forEach((m,i)=>{if(m&&i<6)base[i]=Object.assign(base[i],m)});
-  }
-  mains=base;
+// データが無い/壊れている場合のみ初期メニューを使う（登録の削除が復活しないように）
+if(!Array.isArray(mains)||mains.length===0){
+  mains=JSON.parse(JSON.stringify(defaultMains));
 }
+mains.forEach(m=>{if(m&&m.on===undefined)m.on=true});
 // 【自動移行】旧形式のソース説明文（保存済みデータ）を新形式に置き換える
 mains.forEach(m=>{
   if(m&&m.id==='A'&&m.desc&&m.desc.indexOf('【ソースは3種類】')>=0){
@@ -538,10 +547,8 @@ async function loadFromGAS(silent){
       // メイン同期：クラウド側のメニューが新しければこの端末にも反映
       const mrec=merged.find(r=>r&&r.id==='__mains__');
       if(mrec&&mrec.ts>mainsTs&&Array.isArray(mrec.mainsData)&&mrec.mainsData.length){
-        mains.forEach((m,i)=>{
-          const c=mrec.mainsData[i];
-          if(c){m.name=c.name||'';m.desc=c.desc||''}
-        });
+        // 丸ごと差し替え（メニュー数の増減・表示/非表示にも対応）
+        mains=mrec.mainsData.map(c=>({id:c.id||'',name:c.name||'',desc:c.desc||'',img:'',on:c.on!==false}));
         save(MAIN_KEY,mains);
         mainsTs=mrec.ts;localStorage.setItem(MAIN_TS_KEY,mainsTs);
         buildMainEdit();render();
@@ -594,22 +601,53 @@ function autoGrowKob(el){
 }
 // ═══ 選べるメイン A〜F（お品書き2枚目）の編集 ═══
 // マニュアル（manuals）とは別データ。本日の献立タブで編集し、お品書きに連動する。
-function syncMains(){mains.forEach((m,i)=>{const a=document.getElementById('mn'+i),b=document.getElementById('md'+i);if(a)m.name=a.value;if(b)m.desc=b.value})}
+function syncMains(){mains.forEach((m,i)=>{const a=document.getElementById('mn'+i),b=document.getElementById('md'+i),c=document.getElementById('mon'+i);if(a)m.name=a.value;if(b)m.desc=b.value;if(c)m.on=c.checked})}
 function buildMainEdit(){
   const w=document.getElementById('main-edit');
   if(!w)return;
   w.innerHTML='';
   mains.forEach((m,i)=>{
+    if(m.on===undefined)m.on=true;
     const d=document.createElement('div');
-    d.className='main-edit';
+    d.className='main-edit'+(m.on?'':' mn-off');
     d.innerHTML=
       '<div class="main-edit-hd">'
-      +'<span class="main-edit-id">'+(m.id||String.fromCharCode(65+i))+'</span>'
-      +'<textarea class="mname" id="mn'+i+'" placeholder="料理名（改行できます・空にすると印刷に出ません）" rows="1" style="flex:1;resize:none;overflow:hidden" oninput="syncMains();render();this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'">'+esc(m.name)+'</textarea>'
+      +'<label class="mn-sw"><input type="checkbox" id="mon'+i+'" '+(m.on?'checked':'')+' onchange="toggleMain('+i+')"><span class="mn-sw-body"><span class="mn-sw-knob"></span></span><span class="mn-sw-lbl">'+(m.on?'表示中':'非表示')+'</span></label>'
+      +'<button class="mn-del" onclick="delMain('+i+')" title="このメニューを削除">✕</button>'
+      +'</div>'
+      +'<div class="main-edit-hd">'
+      +'<textarea class="mname" id="mn'+i+'" placeholder="料理名（改行できます）" rows="1" style="flex:1;resize:none;overflow:hidden" oninput="syncMains();render();this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'">'+esc(m.name)+'</textarea>'
       +'</div>'
       +'<textarea id="md'+i+'" placeholder="説明文（改行も反映されます）" oninput="syncMains();render()" rows="2">'+esc(m.desc)+'</textarea>';
     w.appendChild(d);
   });
+  const add=document.createElement('button');
+  add.className='btn btn-sub';
+  add.style.cssText='width:100%;margin-top:4px';
+  add.textContent='＋ メニューを追加（登録して表示/非表示で使い回せます）';
+  add.onclick=addMain;
+  w.appendChild(add);
+}
+// 表示スイッチ：押した瞬間に保存＆クラウド同期（保存ボタン不要）
+function toggleMain(i){
+  const c=document.getElementById('mon'+i);
+  mains[i].on=!!(c&&c.checked);
+  saveMains();
+  buildMainEdit();
+}
+function addMain(){
+  syncMains();
+  const nid=String.fromCharCode(65+mains.length)||('M'+mains.length);
+  mains.push({id:nid,name:'',desc:'',img:'',on:true});
+  buildMainEdit();
+  toast('メニュー欄を追加しました。入力して「メニューを保存」を押してください');
+}
+function delMain(i){
+  if(!confirm('「'+(mains[i].name||'（無題）')+'」を削除しますか？\n（非表示にするだけなら、スイッチをオフにしてください）'))return;
+  syncMains();
+  mains.splice(i,1);
+  saveMains();
+  buildMainEdit();
 }
 const MAIN_TS_KEY='cafe_teri_v2_mains_ts';
 let mainsTs=+(localStorage.getItem(MAIN_TS_KEY)||0);
@@ -618,7 +656,7 @@ function saveMains(){
   // クラウド同期：メインを特殊レコード(__mains__)として履歴データに相乗りさせる
   mainsTs=Date.now();localStorage.setItem(MAIN_TS_KEY,mainsTs);
   let s=ls(KOB_KEY,[]).filter(r=>r&&r.id!=='__mains__');
-  s.push({id:'__mains__',ts:mainsTs,mainsData:mains.map(m=>({id:m.id,name:m.name||'',desc:m.desc||''}))});
+  s.push({id:'__mains__',ts:mainsTs,mainsData:mains.map(m=>({id:m.id,name:m.name||'',desc:m.desc||'',on:m.on!==false}))});
   save(KOB_KEY,s);
   pushToGAS(s.map(r=>({...r,zenImg:r.zenImg?'[image]':''})));
   toast('✅ メニューを保存しました');
@@ -886,7 +924,7 @@ function buildOshHTML(kobArr, mainsArr, note){
   const kl=kob5.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(v?esc(v).replace(/\n/g,'<br>'):'　　　　　　')+'</div></div>').join('');
 
   // メイン（料理名が入っているものだけ）
-  const activeMains=(mainsArr||[]).filter(m=>m&&m.name&&m.name.trim());
+  const activeMains=(mainsArr||[]).filter(m=>m&&m.name&&m.name.trim()&&m.on!==false);
   const ml=activeMains.map(m=>{
     // 旧形式のソース説明文（履歴スナップショット等に残存）は描画時に新形式へ変換
     let descRaw=m.desc||'';
@@ -1031,7 +1069,7 @@ function toast(m){const t=document.createElement('div');t.className='toast';t.te
 function saveRecord(){
   syncMains(); // 入力中のメイン情報を反映
   // 写真は外して、メインA〜Fの料理名と説明をスナップショット保存
-  const mainsSnap=mains.map(m=>({id:m.id,name:m.name||'',desc:m.desc||''}));
+  const mainsSnap=mains.filter(m=>m.on!==false).map(m=>({id:m.id,name:m.name||'',desc:m.desc||''}));
   const rec={
     id:Date.now(),
     date:document.getElementById('dt').value,
@@ -1118,12 +1156,15 @@ function copyFrom(id){
   buildMarkEditor();
   // お品書きのメイン料理も復元するか確認
   if(r.mainsSnap&&r.mainsSnap.length&&confirm('この日のメイン料理（お品書き）も一緒に復元しますか？')){
-    mains.forEach((m,i)=>{
-      const snap=r.mainsSnap[i];
-      if(snap){m.name=snap.name||'';m.desc=snap.desc||''}
+    // 登録済みメニューは消さず、その日の表示状態を再現する
+    mains.forEach(m=>m.on=false);
+    r.mainsSnap.filter(sn=>sn&&sn.name&&sn.name.trim()).forEach(sn=>{
+      const t=mains.find(m=>m.name===sn.name);
+      if(t){t.desc=sn.desc||'';t.on=true}
+      else mains.push({id:'',name:sn.name,desc:sn.desc||'',img:'',on:true});
     });
-    save(MAIN_KEY,mains);
-    buildMainEdit(); // 編集欄の表示も復元内容に更新（これがないと古い表示のまま保存で上書きされる）
+    buildMainEdit(); // 先に編集欄を作り直してから保存（順序が重要）
+    saveMains();
     render();
   }
   switchTab('edit');toast('📋 '+(r.dateDisp||r.date)+' を読み込みました');

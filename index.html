@@ -519,10 +519,13 @@ function mergeById(arrA,arrB){
 async function pushToGAS(data){
   if(!GAS_URL)return;
   try{
+    const body=JSON.stringify({action:'save',data:data});
     await fetch(GAS_URL,{
       method:'POST',mode:'no-cors',
       headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'save',data:data})
+      body:body,
+      // keepalive: 保存直後にアプリを閉じても送信が完了する（60KB以下の時のみ有効）
+      keepalive:body.length<60000
     });
     syncBadge('ok');
   }catch(e){
@@ -553,9 +556,11 @@ async function loadFromGAS(silent){
         mainsTs=mrec.ts;localStorage.setItem(MAIN_TS_KEY,mainsTs);
         buildMainEdit();render();
       }
-      // GASが空でローカルにデータがある場合は書き戻す
-      if(json.data.length===0&&local.length>0){
-        pushToGAS(local);
+      // クラウドに無い記録がこの端末にあれば書き戻す（送信失敗で取り残された履歴の救済）
+      const cloudIds=new Set(json.data.map(r=>r&&r.id));
+      const hasMissing=local.some(r=>r&&r.id!=null&&!cloudIds.has(r.id));
+      if(hasMissing){
+        pushToGAS(merged.map(r=>({...r,zenImg:r.zenImg?'[image]':''})));
       }
       syncBadge('ok');
       // 履歴タブが開いていれば再描画
@@ -830,6 +835,29 @@ function resetMarks(){
 }
 function getKob(){return [0,1,2,3,4].map(i=>{const e=document.getElementById('k'+i);return e?e.value.replace(/^\n+|\n+$/g,'').trim():''})}
 function setKob(a){for(let i=0;i<5;i++){const e=document.getElementById('k'+i);if(e){e.value=(a&&a[i])||'';autoGrowKob(e);}}}
+
+// ═══ 下書き自動保存：打ち込んだ瞬間に端末へ記録し、再読み込みされても復元する ═══
+const DRAFT_KEY='cafe_teri_v2_draft';
+let __draftReady=false; // 復元が終わるまで下書きの上書きを禁止（起動時の空保存でデータが消えるのを防ぐ）
+function saveDraft(){
+  if(!__draftReady)return;
+  try{
+    const n=document.getElementById('note');
+    localStorage.setItem(DRAFT_KEY,JSON.stringify({kob:getKob(),note:n?n.value:'',at:Date.now()}));
+  }catch(e){}
+}
+function restoreDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem(DRAFT_KEY));
+    if(!d)return;
+    // 何か既に入力されている場合は上書きしない（履歴読み込み直後など）
+    const empty=getKob().every(v=>!v)&&!(document.getElementById('note')||{}).value;
+    if(!empty)return;
+    setKob(d.kob||[]);
+    const n=document.getElementById('note');if(n)n.value=d.note||'';
+  }catch(e){}
+}
+function draftReady(){__draftReady=true;saveDraft()}
 let curDispDate='';
 function setDate(){
   const inp=document.getElementById('dt');const d=new Date();
@@ -1043,6 +1071,7 @@ function renderA4(el,html){
 }
 let __pvPhotoSig=''; // 写真ページは重いので、内容が変わった時だけ再描画する
 function render(){
+  saveDraft(); // 入力のたびに下書きを自動保存（再読み込み対策）
   const a=document.getElementById('pv-photo');
   if(a){
     const sig=(zenImg?zenImg.length:0)+':'+JSON.stringify(marks);
@@ -1336,9 +1365,13 @@ function printHist(id){
   toast('🖨 '+(r.dateDisp||r.date)+' のお品書きを印刷します');
 }
 
-buildKobEdit();buildMainEdit();buildManEdit();buildMarkEditor();setDate();render();
+buildKobEdit();buildMainEdit();buildManEdit();buildMarkEditor();setDate();restoreDraft();draftReady();render();
 // 起動時にクラウドからデータを取得して合成（画面表示後に実行）
 if(GAS_URL)setTimeout(()=>loadFromGAS(true),1000);
+// アプリに戻ってきた時も自動同期（同期前の古い端末が上書き保存する事故を防ぐ）
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&GAS_URL)loadFromGAS(true);
+});
 </script>
 </body>
 </html>

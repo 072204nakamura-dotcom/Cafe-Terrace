@@ -523,9 +523,9 @@ async function pushToGAS(data){
     await fetch(GAS_URL,{
       method:'POST',mode:'no-cors',
       headers:{'Content-Type':'text/plain'},
-      body:body,
-      // keepalive: 保存直後にアプリを閉じても送信が完了する（60KB以下の時のみ有効）
-      keepalive:body.length<60000
+      body:body
+      // 注意：keepaliveはGASのリダイレクトと相性が悪く送信失敗するため使わない。
+      // 保存直後に閉じた場合の取りこぼしは「取り残し救済」（次回起動時の自動書き戻し）でカバーする。
     });
     syncBadge('ok');
   }catch(e){

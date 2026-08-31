@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light only">
 <title>テイクアウトメニュー｜Café 照</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <style>
   :root{
     --sage:#3E5C50;
@@ -23,20 +23,41 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html{-webkit-text-size-adjust:100%;}
   body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--paper);
-       color:var(--ink);line-height:1.7;}
+       color:var(--ink);line-height:1.7;
+       padding-bottom:calc(env(safe-area-inset-bottom) + 84px);}
+
+  /* ===== 下部の電話バー ===== */
+  .callbar{position:fixed;left:0;right:0;bottom:0;z-index:20;
+           background:rgba(46,74,64,.97);
+           padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
+           display:flex;justify-content:center;
+           box-shadow:0 -2px 12px rgba(0,0,0,.18);}
+  .callbar a{display:flex;align-items:center;justify-content:center;gap:10px;
+             width:100%;max-width:520px;
+             background:#F4F1E8;color:var(--sage-deep);
+             text-decoration:none;border-radius:10px;
+             padding:15px 18px;font-size:18px;font-weight:700;
+             letter-spacing:.06em;}
+  .callbar .tel{font-size:16px;font-weight:500;letter-spacing:.02em;}
 
   /* ===== ヒーロー ===== */
   .hero{background:linear-gradient(168deg,var(--sage-deep) 0%,var(--sage) 100%);
         color:#F4F1E8;text-align:center;
         padding:calc(env(safe-area-inset-top) + 40px) 20px 34px;}
-  .hero .shop{font-family:'Shippori Mincho',serif;font-size:12px;
-              letter-spacing:.4em;text-indent:.4em;color:var(--gold-soft);}
+  .hero .shop{font-family:'Shippori Mincho',serif;font-size:13px;font-weight:500;
+              letter-spacing:.4em;text-indent:.4em;color:#D8C9A0;}
   .hero h1{font-family:'Shippori Mincho',serif;font-weight:600;font-size:29px;
-           letter-spacing:.22em;text-indent:.22em;margin:12px 0 6px;}
+           letter-spacing:.14em;text-indent:.14em;margin:12px 0 6px;
+           white-space:nowrap;}
+  @media (max-width:389px){ .hero h1{font-size:26px;letter-spacing:.1em;text-indent:.1em;} }
   .hero .en{font-family:'Cormorant Garamond',serif;font-size:13px;
             letter-spacing:.5em;text-indent:.5em;color:var(--gold-soft);}
-  .hero .lead{font-size:12px;font-weight:300;color:#D9D9CE;max-width:310px;
-              margin:18px auto 0;}
+  .hero .lead{font-size:14px;font-weight:400;color:#E8E6DC;max-width:320px;
+              margin:18px auto 0;line-height:1.8;}
+  .hero .hours{display:inline-block;margin:16px auto 0;
+               font-size:15px;font-weight:700;letter-spacing:.08em;
+               color:#F4F1E8;border:1px solid var(--gold-soft);
+               border-radius:999px;padding:7px 20px;}
   .hero .dia{width:8px;height:8px;border:1px solid var(--gold-soft);
              rotate:45deg;margin:20px auto 0;}
 
@@ -47,10 +68,10 @@
         overflow-x:auto;-webkit-overflow-scrolling:touch;
         scrollbar-width:none;}
   .tabs::-webkit-scrollbar{display:none;}
-  .tab{flex:0 0 auto;padding:8px 16px;font-size:13px;
-       letter-spacing:.1em;font-family:inherit;white-space:nowrap;
+  .tab{flex:0 0 auto;padding:9px 18px;font-size:15px;font-weight:500;
+       letter-spacing:.08em;font-family:inherit;white-space:nowrap;
        border:1px solid var(--line);border-radius:999px;background:#fff;
-       color:var(--muted);cursor:pointer;transition:all .18s ease;}
+       color:#5A574E;cursor:pointer;transition:all .18s ease;}
   .tab.on{background:var(--sage);border-color:var(--sage);color:#fff;}
 
   /* ===== リスト ===== */
@@ -60,45 +81,49 @@
                 font-size:18px;letter-spacing:.22em;color:var(--sage);
                 white-space:nowrap;}
   .sec-title .en{font-family:'Cormorant Garamond',serif;font-style:italic;
-                 font-size:13px;color:var(--gold);white-space:nowrap;}
+                 font-size:14px;font-weight:600;color:var(--gold);white-space:nowrap;}
   .sec-title .ln{flex:1;border-top:1px dotted var(--line);}
 
-  .note{font-size:11.5px;font-weight:300;color:var(--muted);
-        margin:-4px 4px 12px;}
+  .note{font-size:13px;font-weight:400;color:#5A574E;
+        margin:-2px 4px 14px;line-height:1.75;}
 
   /* ピザカード */
   .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
         padding:16px 16px 14px;margin-bottom:12px;
         box-shadow:0 1px 4px rgba(62,92,80,.05);}
   .c-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 8px;}
-  .c-name{font-family:'Shippori Mincho',serif;font-weight:600;font-size:15.5px;
+  .c-name{font-family:'Shippori Mincho',serif;font-weight:700;font-size:18px;
           line-height:1.45;}
-  .c-badge{font-size:10px;color:#fff;background:var(--gold);border-radius:3px;
-           padding:2px 8px;letter-spacing:.1em;white-space:nowrap;}
-  .c-kind{font-family:'Cormorant Garamond',serif;font-size:11.5px;
-          letter-spacing:.14em;color:var(--gold);margin-top:2px;}
-  .c-desc{font-size:12.5px;font-weight:300;color:#55534B;margin-top:8px;}
+  .c-badge{font-size:11.5px;font-weight:500;color:#fff;background:#8F7130;
+           border-radius:3px;padding:3px 9px;letter-spacing:.06em;white-space:nowrap;}
+  .c-kind{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;
+          letter-spacing:.14em;color:#8F7130;margin-top:3px;}
+  .c-desc{font-size:14px;font-weight:400;color:#4E4C45;margin-top:9px;line-height:1.75;}
   .c-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
             margin-top:12px;}
   .p-cell{background:var(--paper);border:1px solid var(--line);border-radius:7px;
           text-align:center;padding:7px 2px 6px;}
-  .p-cell .l{display:block;font-size:9.5px;color:var(--muted);letter-spacing:.06em;}
-  .p-cell .v{font-family:'Cormorant Garamond',serif;font-weight:600;
-             font-size:17px;letter-spacing:.02em;}
+  .p-cell .l{display:block;font-size:11.5px;font-weight:400;color:#5A574E;letter-spacing:.04em;}
+  .p-cell .v{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;
+             font-size:19px;letter-spacing:0;}
   .p-cell.main{background:#F6F1E3;border-color:var(--gold-soft);}
-  .p-cell.main .l,.p-cell.main .v{color:var(--gold);}
+  .p-cell.main .l,.p-cell.main .v{color:#8F7130;}
 
   /* 通常の品目（点線リーダー） */
   .row{display:flex;align-items:baseline;gap:8px;
-       padding:11px 4px;border-bottom:1px dotted var(--line);}
-  .row .n{font-family:'Shippori Mincho',serif;font-weight:500;font-size:14.5px;}
-  .row .d{flex:1;border-top:1px dotted var(--line);transform:translateY(-3px);}
-  .row .p{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;}
+       padding:13px 4px;border-bottom:1px dotted var(--line);}
+  .row .n{font-family:'Shippori Mincho',serif;font-weight:600;font-size:16.5px;}
+  .row .n .r-new{display:inline-block;margin-left:8px;vertical-align:2px;
+                 font-family:'Zen Kaku Gothic New',sans-serif;
+                 font-size:11.5px;font-weight:500;color:#fff;background:var(--bordeaux);
+                 border-radius:3px;padding:2px 7px;letter-spacing:.06em;}
+  .row .d{flex:1;border-top:1px dotted var(--line);transform:translateY(-4px);}
+  .row .p{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;font-size:18px;letter-spacing:0;}
 
-  footer{background:var(--sage-deep);color:#CFCDBF;text-align:center;
+  footer{background:var(--sage-deep);color:#DEDCD0;text-align:center;
          padding:26px 20px calc(env(safe-area-inset-bottom) + 26px);
-         font-size:10.5px;font-weight:300;line-height:2;}
-  footer .shop{font-family:'Shippori Mincho',serif;font-size:12px;
+         font-size:12.5px;font-weight:400;line-height:1.95;}
+  footer .shop{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:500;
                letter-spacing:.3em;color:#F4F1E8;margin-bottom:6px;}
 
   .hidden{display:none;}
@@ -112,6 +137,7 @@
   <h1>テイクアウトメニュー</h1>
   <div class="en">TAKEOUT</div>
   <p class="lead">おうちでも、お出かけ先でも。<br>レジにてお渡ししています。</p>
+  <p class="hours">営業時間　11:00 〜 15:30</p>
   <div class="dia"></div>
 </header>
 
@@ -126,6 +152,10 @@
 
 <main id="list"></main>
 
+<div class="callbar">
+  <a href="tel:08029240984">お電話でのご注文 <span class="tel">080-2924-0984</span></a>
+</div>
+
 <footer>
   <div class="shop">Café 照 ─ てらす ─</div>
   広島県安芸郡熊野町　筆の里工房内<br>
@@ -139,13 +169,13 @@ const PIZZA=[
   {kind:"定番", name:"Tマルゲリータ",
    d:"トマトとチーズ、バジル。まずはここから。",
    full:980, half:650, piece:400},
-  {kind:"魚介系", badge:"8月の月替わり", name:"T海老と舞茸のジェノベーゼ",
-   d:"海老のうまみに、バジルの香りをのせて。",
+  {kind:"魚介系", badge:"9月の月替わり", name:"T大和イカと蓮根のトマトソース",
+   d:"大和イカと蓮根を、トマトソースで。",
    full:980, half:650, piece:400},
-  {kind:"肉系", badge:"8月の月替わり", name:"Tモルタデッラとコーンのクリームソース",
-   d:"イタリアのハムと、コーンのやさしい甘み。",
+  {kind:"肉系", badge:"9月の月替わり", name:"T茄子とミートソース",
+   d:"ミートソースと茄子を重ねて。",
    full:980, half:650, piece:400},
-  {kind:"チーズ系", name:"Tクアトロフォルマッジ",
+  {kind:"チーズ系", name:"Tクワトロファルマッジ",
    d:"4種のチーズを、贅沢に重ねて。",
    full:1280, half:880, piece:500},
 ];
@@ -157,6 +187,7 @@ const ITEMS=[
   {t:"bento", n:"T鳥コーロー弁当", p:1000},
   {t:"bento", n:"T唐揚げ弁当", p:1000},
   {t:"bento", n:"Tチキン南蛮弁当", p:1100},
+  {t:"bento", n:"Tミックスの海老フライ弁当", p:1200, new:true},
   {t:"bento", n:"T白ごはん", p:200},
   // サイド
   {t:"side", n:"Tポテト", p:350},
@@ -213,8 +244,9 @@ function pizzaCard(z){
 }
 
 function row(i){
+  const nb=i.new?`<span class="r-new">新登場</span>`:"";
   return `<div class="row" data-t="${i.t}">
-    <span class="n">${i.n}</span><span class="d"></span><span class="p">${yen(i.p)}</span>
+    <span class="n">${i.n}${nb}</span><span class="d"></span><span class="p">${yen(i.p)}</span>
   </div>`;
 }
 

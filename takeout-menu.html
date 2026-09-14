@@ -120,17 +120,6 @@
   .row .d{flex:1;border-top:1px dotted var(--line);transform:translateY(-4px);}
   .row .p{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;font-size:18px;letter-spacing:0;}
 
-  /* 取り置き案内（ピザセクション内） */
-  .torioki{background:#F6F1E3;border:1px solid var(--gold-soft);border-radius:10px;
-           padding:16px 16px 15px;margin:4px 0 14px;}
-  .torioki .t-title{font-family:'Shippori Mincho',serif;font-weight:700;font-size:17px;
-                    letter-spacing:.12em;color:#8F7130;margin-bottom:8px;}
-  .torioki .t-body{font-size:14px;font-weight:400;color:var(--ink);line-height:1.8;}
-  .torioki .t-body strong{font-weight:700;color:var(--sage-deep);}
-  .torioki .t-sub{font-size:13px;font-weight:400;color:#5A574E;margin-top:8px;line-height:1.75;}
-  .torioki .t-line{display:inline-block;margin-top:10px;font-size:13.5px;font-weight:500;
-                   color:var(--sage-deep);text-decoration:underline;text-underline-offset:3px;}
-
   /* 営業日カレンダー */
   .cal{max-width:560px;margin:6px auto 8px;padding:0 20px 30px;}
   .cal .c-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
@@ -293,12 +282,6 @@ function render(){
     if(s.t==="pizza"){
       html+=`<p class="note" data-t="pizza">魚介系と肉系は毎月変わります。江別製粉の北海道産小麦100%の生地を、窯で焼き上げています。</p>`;
       html+=PIZZA.map(pizzaCard).join("");
-      html+=`<div class="torioki" data-t="pizza">
-        <div class="t-title">お取り置きできます</div>
-        <p class="t-body">LINEのトーク画面に戻って<strong>「取り置き」</strong>と送ってください。<br>確認のお返事をもって、お取り置き完了です。</p>
-        <p class="t-sub">お急ぎ・本日分は、下の「お電話でのご注文」ボタンが確実です。</p>
-        <a class="t-line" href="https://lin.ee/oM9z13O">LINEをまだ追加していない方はこちら（友だち追加）</a>
-      </div>`;
     }else{
       html+=ITEMS.filter(i=>i.t===s.t).map(row).join("");
     }

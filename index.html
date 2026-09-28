@@ -173,6 +173,7 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 
 /* 「お好きなメインをお選びください」帯 */
 .pg-osh .sec-pick{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--sage-band);border-radius:10px;padding:2.2% 4%;margin-bottom:3.2%}
+.pg-osh .t-txt.t-en{letter-spacing:.04em}
 .pg-osh .sec-pick .t-txt{font-family:var(--serif);font-size:23px;font-weight:800;color:var(--olive-d);letter-spacing:.12em}
 
 /* メイン一覧 */
@@ -363,6 +364,9 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
     <div class="btn-bar">
       <button class="btn btn-outline" onclick="copyShare()">📋 内容をLINE用にコピー</button>
     </div>
+    <div class="btn-bar">
+      <button class="btn btn-outline" onclick="openEnglish()">🌐 英語版お品書き（AI翻訳 → 印刷）</button>
+    </div>
     <div class="preview-cap">― 印刷イメージ：お品書き（毎日差し替え）―</div>
     <div class="a4" id="pv-osh"></div>
   </div>
@@ -396,6 +400,23 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   </div>
 </div>
 <div id="print-host"></div>
+
+<!-- 英語版お品書きモーダル -->
+<div class="edit-overlay" id="en-overlay" onclick="if(event.target===this)closeEnModal()">
+  <div class="edit-modal">
+    <div class="edit-handle"></div>
+    <div class="edit-hd">
+      <div class="edit-ttl">🌐 英語版お品書き</div>
+      <button class="edit-close" onclick="closeEnModal()">✕</button>
+    </div>
+    <div style="font-size:11px;color:var(--teal-m);line-height:1.6;margin-bottom:10px">AIが訳した英語です。直したいところは書き換えてから印刷してください（訳は端末に記憶され、献立が同じなら次回は翻訳しません）。</div>
+    <div id="en-body"></div>
+    <div class="edit-actions">
+      <button class="edit-cancel" onclick="translateEnglish(true)">🔄 訳し直す</button>
+      <button class="edit-save" onclick="printEnglish()">🖨 英語版を印刷</button>
+    </div>
+  </div>
+</div>
 
 <!-- 履歴編集モーダル -->
 <div class="edit-overlay" id="edit-overlay" onclick="if(event.target===this)closeEditModal()">
@@ -788,7 +809,10 @@ function upd(d){
 //   kobArr   : 小鉢の配列（5要素想定／不足分は空マスで補完）
 //   mainsArr : メインの配列 [{id,name,desc}, ...]（名前が空のものは自動除外）
 //   note     : 備考の文字列
-function buildOshHTML(kobArr, mainsArr, note){
+function buildOshHTML(kobArr, mainsArr, note, lang){
+  const EN=(lang==='en');
+  const T_KOB=EN?"Today's Five Small Dishes":'日替わり小鉢の献立';
+  const T_PICK=EN?'Please choose one main dish':'お好きなメインをお選びください';
   // 装飾SVG（印刷で確実に出るようインライン）
   const LEAF='<svg width="36" height="18" viewBox="0 0 36 18" xmlns="http://www.w3.org/2000/svg"><g stroke="#8a9667" stroke-width="1" stroke-linecap="round" fill="none"><path d="M3 9 H31"/></g><g fill="#9aa67a"><ellipse cx="10" cy="5" rx="4.2" ry="2" transform="rotate(-28 10 5)"/><ellipse cx="18" cy="4" rx="4.2" ry="2" transform="rotate(-28 18 4)"/><ellipse cx="26" cy="5" rx="4.2" ry="2" transform="rotate(-28 26 5)"/><ellipse cx="14" cy="13" rx="4.2" ry="2" transform="rotate(28 14 13)"/><ellipse cx="22" cy="14" rx="4.2" ry="2" transform="rotate(28 22 14)"/></g></svg>';
   const LEAFR='<span style="display:inline-flex;transform:scaleX(-1)">'+LEAF+'</span>';
@@ -835,10 +859,10 @@ function buildOshHTML(kobArr, mainsArr, note){
 
   return '<div class="pg-osh wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
     +'<div class="body">'
-    +'<div class="osh-ttl"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt">日替わり小鉢の献立</span>'+LEAFR+'</div>'
+    +'<div class="osh-ttl"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt'+(EN?' t-en':'')+'">'+T_KOB+'</span>'+LEAFR+'</div>'
     +'<div class="osh-rule"><span class="dot"></span><span class="ln"></span><span class="dot"></span></div>'
     +'<div class="kob-list">'+kl+'</div>'
-    +'<div class="sec-pick"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt">お好きなメインをお選びください</span>'+LEAFR+'</div>'
+    +'<div class="sec-pick"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt'+(EN?' t-en':'')+'">'+T_PICK+'</span>'+LEAFR+'</div>'
     +'<div class="ml">'+ml+'</div>'
     +noteH
     +'</div></div></div>';
@@ -1187,6 +1211,64 @@ function doPrint(pages){
 }
 
 function printOshOnly(){render();doPrint([oshPageHTML()])}
+
+/* ═══ 🌐 英語版お品書き（AI翻訳はお惣菜レシピ帳のGASを共用・キーはGAS側） ═══ */
+const AI_URL='https://script.google.com/macros/s/AKfycbyJzQwMpxfb2PTApjCINyjyHMLUjPpEM4RADrINKXw8N8QVtDIzB1ZTKTCqLCm6ToZMKQ/exec';
+const EN_CACHE_KEY='cafe_teri_en_cache';
+let enData=null, enSrc=null;
+function enSource(){
+  syncMains();
+  const am=mains.filter(m=>m&&m.name&&m.name.trim()&&m.on!==false);
+  const noteEl=document.getElementById('note');
+  return {kob:getKob(), mains:am.map(m=>({name:m.name||'',desc:m.desc||''})), note:noteEl?noteEl.value.trim():''};
+}
+function openEnglish(){
+  enSrc=enSource();
+  const key=JSON.stringify(enSrc);
+  const cache=ls(EN_CACHE_KEY,null);
+  if(cache&&cache.key===key&&cache.data){enData=cache.data;showEnModal();return;}
+  translateEnglish(false);
+}
+async function translateEnglish(force){
+  enSrc=enSource();
+  const key=JSON.stringify(enSrc);
+  toast('🌐 英語に翻訳中…（10〜20秒）');
+  const sys='You translate a Japanese cafe lunch menu into natural, appetizing English for a printed menu. Reply with JSON only, no explanation: {"kob":["","","","",""],"mains":[{"name":"","desc":""}],"note":""}. Rules: keep exactly the same number and order of items as the input; an empty input stays an empty string; keep line breaks (\\n) inside desc; a desc line that starts with 【...】 must keep the 【 】 markers and translate the text inside and after them (e.g. 【Choose your sauce】① Scallop shio-koji ② Rich spicy miso ③ Seafood soy); use romanized Japanese dish names with a short English gloss when helpful (e.g. "Kinpira gobo (sweet-soy braised burdock)"); concise menu style; do not add or remove items; do not mention prices unless present.';
+  try{
+    const r=await fetch(AI_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'ai',system:sys,user:JSON.stringify(enSrc)})});
+    const j=await r.json(); if(!j.ok)throw new Error(j.error||'AI error');
+    const m=(j.text||'').match(/\{[\s\S]*\}/); if(!m)throw new Error('no JSON');
+    const d=JSON.parse(m[0]);
+    enData={kob:[0,1,2,3,4].map(i=>(d.kob&&d.kob[i])||''), mains:enSrc.mains.map((x,i)=>({name:(d.mains&&d.mains[i]&&d.mains[i].name)||x.name, desc:(d.mains&&d.mains[i]&&d.mains[i].desc)||''})), note:d.note||''};
+    save(EN_CACHE_KEY,{key:key,data:enData});
+    showEnModal();
+  }catch(e){toast('⚠️ 翻訳に失敗しました：'+e.message);}
+}
+function showEnModal(){
+  const b=document.getElementById('en-body');
+  let h='<div class="edit-sec"><div class="edit-sec-ttl">TODAY\'S FIVE SMALL DISHES</div>';
+  enData.kob.forEach((v,i)=>{h+='<div class="edit-kob-row"><div class="edit-kob-num">'+(i+1)+'</div><textarea class="edit-kob-input" id="en-k'+i+'" rows="1">'+esc(v)+'</textarea></div>';});
+  h+='</div><div class="edit-sec"><div class="edit-sec-ttl">MAIN DISHES</div>';
+  enData.mains.forEach((m,i)=>{h+='<div class="edit-main"><input type="text" id="en-mn'+i+'" value="'+esc(m.name)+'" placeholder="Dish name"><textarea id="en-md'+i+'" rows="2" placeholder="Description">'+esc(m.desc)+'</textarea></div>';});
+  h+='</div><div class="edit-sec"><div class="edit-sec-ttl">NOTE</div><div class="edit-row"><input type="text" id="en-note" value="'+esc(enData.note)+'"></div></div>';
+  b.innerHTML=h;
+  document.getElementById('en-overlay').classList.add('open');
+  b.querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});
+}
+function closeEnModal(){document.getElementById('en-overlay').classList.remove('open');}
+function collectEn(){
+  const kob=[0,1,2,3,4].map(i=>{const e=document.getElementById('en-k'+i);return e?e.value.trim():''});
+  const ms=enData.mains.map((m,i)=>({id:'',on:true,name:(document.getElementById('en-mn'+i)||{}).value||'',desc:(document.getElementById('en-md'+i)||{}).value||''}));
+  const note=(document.getElementById('en-note')||{}).value||'';
+  enData={kob:kob,mains:ms.map(x=>({name:x.name,desc:x.desc})),note:note};
+  save(EN_CACHE_KEY,{key:JSON.stringify(enSrc),data:enData});
+  return {kob:kob,mains:ms,note:note};
+}
+function printEnglish(){
+  const d=collectEn();
+  closeEnModal();
+  doPrint([buildOshHTML(d.kob,d.mains,d.note,'en')]);
+}
 function printMan(){render();doPrint(manPages())}
 
 /* ── 履歴データから印刷（写真ページ＋お品書きページ） ── */

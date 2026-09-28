@@ -65,6 +65,34 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 .mn-del{margin-left:auto;width:28px;height:28px;border:1px solid rgba(140,60,40,.4);border-radius:50%;background:none;color:#a0522d;font-size:13px;cursor:pointer;flex-shrink:0}
 .main-edit.mn-off{opacity:.55}
 .main-edit.mn-off .mname,.main-edit.mn-off textarea{background:rgba(0,0,0,.03)}
+/* 英語メニューカード */
+.en-ok{font-size:13px;color:#2a5c3f;font-weight:700;padding:6px 2px 10px}
+.en-cap{font-size:12px;color:#7a6e5e;font-weight:700;margin-bottom:8px;line-height:1.6}
+.en-row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.en-row .en-jp{flex:1;font-size:12.5px;color:#3d3327;line-height:1.4;min-width:0;word-break:break-word}
+.en-row input{flex:1.1;min-width:0;padding:8px 10px;border:1px solid #cfc5b2;border-radius:8px;font-size:13px;background:#fff}
+/* 英語版お品書き */
+.pg-osh.en .t-txt{letter-spacing:.04em}
+.pg-osh.en .kl-t{letter-spacing:.01em;font-size:16.5px}
+.pg-osh.en .m-nm{letter-spacing:.01em;font-size:17px}
+.pg-osh.en .m-ds{font-size:13px;line-height:1.45}
+.pg-osh.en .mln{padding:1.6% 0}
+.pg-osh.en .m-callout .c-items{font-size:14px}
+.pg-osh.en .kob-list{row-gap:2.2%;margin-bottom:3.2%}
+.pg-osh.en .kl{padding:2.4% 4%}
+.pg-osh.en .sec-pick{margin-bottom:2.6%}
+/* 圧縮の最終段階を強化（英語6品フル対応） */
+.pg-osh.densest .mln{padding:.6% 0}
+.pg-osh.densest .m-ds{font-size:10.5px;line-height:1.3}
+.pg-osh.densest .m-nm{font-size:13.5px}
+.pg-osh.densest .kl{padding:1.4% 3%}
+.pg-osh.densest .sec-pick{padding:1.4% 4%;margin-bottom:1.8%}
+.pg-osh.densest .m-callout{padding:3px 8px;margin-top:3px}
+.pg-osh.densest .m-callout .c-items{font-size:11px}
+.pg-osh.densest .en-info{font-size:11.5px;margin:-1% 0 2%}
+.pg-osh.densest .osh-rule{margin-bottom:2%}
+.pg-osh .en-info{text-align:center;font-family:var(--serif);font-size:14px;color:var(--ink2);letter-spacing:.05em;font-weight:700;margin:-1.5% 0 3%}
+.pg-osh .en-info+.kob-list{margin-top:0}
 /* 番号ドラッグ調整エリア */
 .mark-stage{position:relative;display:inline-block;max-width:100%;border-radius:8px;overflow:hidden;background:#eee;line-height:0;touch-action:none}
 .mark-stage img{max-width:100%;display:block}
@@ -173,7 +201,6 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
 
 /* 「お好きなメインをお選びください」帯 */
 .pg-osh .sec-pick{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--sage-band);border-radius:10px;padding:2.2% 4%;margin-bottom:3.2%}
-.pg-osh .t-txt.t-en{letter-spacing:.04em}
 .pg-osh .sec-pick .t-txt{font-family:var(--serif);font-size:23px;font-weight:800;color:var(--olive-d);letter-spacing:.12em}
 
 /* メイン一覧 */
@@ -358,14 +385,16 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
     <div class="btn-bar">
       <button class="btn btn-gold" onclick="printOshOnly()">🖨 お品書きを印刷（毎日用）</button>
     </div>
+    <div class="card">
+      <div class="sec-lbl">🌐 英語メニュー（別紙・必要な時だけ）</div>
+      <div id="en-missing"></div>
+      <button class="btn btn-outline" style="width:100%" onclick="printOshEN()">🖨 英語版お品書きを印刷</button>
+    </div>
     <div class="btn-bar">
       <button class="btn btn-teal" onclick="saveRecord()">💾 この献立を保存</button>
     </div>
     <div class="btn-bar">
       <button class="btn btn-outline" onclick="copyShare()">📋 内容をLINE用にコピー</button>
-    </div>
-    <div class="btn-bar">
-      <button class="btn btn-outline" onclick="openEnglish()">🌐 英語版お品書き（AI翻訳 → 印刷）</button>
     </div>
     <div class="preview-cap">― 印刷イメージ：お品書き（毎日差し替え）―</div>
     <div class="a4" id="pv-osh"></div>
@@ -400,23 +429,6 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
   </div>
 </div>
 <div id="print-host"></div>
-
-<!-- 英語版お品書きモーダル -->
-<div class="edit-overlay" id="en-overlay" onclick="if(event.target===this)closeEnModal()">
-  <div class="edit-modal">
-    <div class="edit-handle"></div>
-    <div class="edit-hd">
-      <div class="edit-ttl">🌐 英語版お品書き</div>
-      <button class="edit-close" onclick="closeEnModal()">✕</button>
-    </div>
-    <div style="font-size:11px;color:var(--teal-m);line-height:1.6;margin-bottom:10px">AIが訳した英語です。直したいところは書き換えてから印刷してください（訳は端末に記憶され、献立が同じなら次回は翻訳しません）。</div>
-    <div id="en-body"></div>
-    <div class="edit-actions">
-      <button class="edit-cancel" onclick="translateEnglish(true)">🔄 訳し直す</button>
-      <button class="edit-save" onclick="printEnglish()">🖨 英語版を印刷</button>
-    </div>
-  </div>
-</div>
 
 <!-- 履歴編集モーダル -->
 <div class="edit-overlay" id="edit-overlay" onclick="if(event.target===this)closeEditModal()">
@@ -470,6 +482,146 @@ catch(e){manuals=null}
 if(!Array.isArray(manuals)) manuals=[];
 
 let zenImg='';
+
+// ═══ 英語メニュー：対訳辞書 ═══
+// 初期辞書（よく出る料理・定型文）。利用者が追加した翻訳(userDict)が優先される。
+const DICT_SEED={
+'塩豆腐　たらこと長芋':'Salted tofu with cod-roe & Japanese yam sauce',
+'塩豆腐　たらこと長芋のソース':'Salted tofu with cod-roe & Japanese yam sauce',
+'キャロットラペ':'Carrot rapée salad',
+'キャロットラペ ミックスナッツ添え':'Carrot rapée with mixed nuts',
+'キャロットラペ　ミックスナッツ添え':'Carrot rapée with mixed nuts',
+'キャロットラペ ミックスナッツのせ':'Carrot rapée with mixed nuts',
+'キャロットラペ　ミックスナッツのせ':'Carrot rapée with mixed nuts',
+'キャロットラぺ':'Carrot rapée salad',
+'胡瓜の辛子漬け':'Mustard-pickled cucumber',
+'胡瓜の昆布漬け':'Kombu-pickled cucumber',
+'マカロニとツナとパプリカのサラダ':'Macaroni salad with tuna & bell pepper',
+'マカロニとパプリカとツナのサラダ':'Macaroni salad with tuna & bell pepper',
+'マカロニとツナのサラダ':'Macaroni salad with tuna',
+'茄子の揚げびたし':'Fried eggplant marinated in dashi',
+'茄子の揚げ浸し':'Fried eggplant marinated in dashi',
+'茄子の煮浸し':'Simmered eggplant in dashi',
+'茄子の揚げびたしと空心菜':'Fried eggplant in dashi & water spinach',
+'茄子としし唐の揚げびたし':'Fried eggplant & shishito peppers in dashi',
+'しし唐と茄子の煮浸し':'Simmered shishito peppers & eggplant',
+'茄子といんげん豆の煮浸し':'Simmered eggplant & green beans',
+'つるむらさきの胡麻和え':'Malabar spinach with sesame dressing',
+'空心菜の胡麻和え':'Water spinach with sesame dressing',
+'空心菜':'Water spinach',
+'空心菜とつるむらさきの中華風':'Water spinach & Malabar spinach, Chinese style',
+'空芯菜とひじきの炒め物':'Stir-fried water spinach & hijiki seaweed',
+'空心菜とひじきの和え物':'Water spinach & hijiki salad',
+'空心菜とアミエビの炒め物':'Stir-fried water spinach with tiny shrimp',
+'空心菜とアミエビとシラスの中華風':'Water spinach with tiny shrimp & whitebait, Chinese style',
+'冬瓜とオクラの煮物　アミエビとシラス添え':'Simmered winter melon & okra with tiny shrimp & whitebait',
+'オクラとししとうのおひたし':'Blanched okra & shishito peppers in dashi',
+'ナスときのこのマリネ':'Marinated eggplant & mushrooms',
+'レンズ豆のサラダ':'Lentil salad',
+'黒豆煮':'Sweet simmered black soybeans',
+'しめじとベーコンのキッシュ':'Shimeji mushroom & bacon quiche',
+'トマトのマリネ':'Marinated tomatoes',
+'トマトのピクルス':'Pickled tomatoes',
+'モロッコ豆のサラダ':'Flat green-bean salad',
+'とうもろこしのフラン':'Sweet-corn flan',
+'トマトのオムレツ':'Tomato omelet',
+'スパニッシュオムレツ':'Spanish omelet',
+'チンゲン菜のカニカマの炒め物':'Stir-fried bok choy with crab stick',
+'長芋とインゲンの明太子和え':'Japanese yam & green beans with spicy cod roe',
+'熟成鶏の胸肉と胡瓜の胡麻和え':'Aged chicken breast & cucumber with sesame',
+'アイオリ風ポテトサラダ':'Aioli-style potato salad',
+'安芸津のジャガイモサラダ':'Akitsu potato salad',
+'豆腐のカレーソース煮込み':'Tofu simmered in curry sauce',
+'豆腐のトマトソース煮込み':'Tofu simmered in tomato sauce',
+'胡瓜と鶏ハム　胡麻風味':'Cucumber & chicken ham with sesame',
+'木耳と卵の炒め物　中華風':'Stir-fried wood-ear mushrooms & egg, Chinese style',
+'にらといんげん豆とひじきの和え物':'Chives, green beans & hijiki salad',
+'厚揚げ豆腐と蕗の薹味噌':'Fried tofu with butterbur-bud miso',
+'鳥コーロー':'“Tori-Coro” Crispy Aged Chicken',
+'ぐつぐつハンバーグ':'Sizzling Hamburg Steak',
+'ぐつぐつハンバーグ　160g':'Sizzling Hamburg Steak (160 g)',
+'国産牛と豚のミンチ 160g':'Japanese beef & pork blend, 160 g',
+'国産牛と豚のミンチ　160g':'Japanese beef & pork blend, 160 g',
+'ミックスの魚':'Mixed Plate ― Fish',
+'ミックスのポーク':'Mixed Plate ― Pork',
+'ミックスの海老フライ':'Mixed Plate ― Fried Shrimp',
+'ミックスのキッシュ':'Mixed Plate ― Quiche',
+'ハンバーグと':'Hamburg steak,',
+'チキン南蛮と':'chicken nanban &',
+'チキン南蛮':'Chicken nanban',
+'白身魚の香草パン粉焼き':'herb-crusted white fish',
+'魚の香草パン粉焼き':'herb-crusted fish',
+'ポークピカタ トマトソース':'pork piccata with tomato sauce',
+'ポークステーキの':'pork steak with',
+'ハニーマスタードソース':'honey-mustard sauce',
+'海老フライ':'fried shrimp',
+'アスパラとズッキーニとベーコンのキッシュ':'asparagus, zucchini & bacon quiche',
+'ズッキーニとトマト':'zucchini & tomato',
+'チーズのキッシュ':'cheese quiche',
+'野菜がたっぷり入ったコラーゲン豊富なソースの上に、揚げ焼きした国産の熟成鶏をのせています。':'Crispy fried Japanese aged chicken over a vegetable-rich, collagen-packed sauce.',
+'ソースは3種類から選べます。':'Choose from three sauces:',
+'ソースは2種類から選べます。':'Choose from two sauces:',
+'①帆立塩麹 ②コク辛味噌 ③海鮮醤油':'① Scallop shio-koji ② Rich spicy miso ③ Seafood soy sauce',
+'①和風ソース ②トマトソース':'① Japanese-style sauce ② Tomato sauce',
+'①和風ソース②トマトソース ③カレーソース':'① Japanese-style ② Tomato ③ Curry sauce',
+'①和風ソース ②トマトソース ③カレーソース':'① Japanese-style ② Tomato ③ Curry sauce',
+'温泉卵添え':'with soft-poached egg',
+};
+const DICT_KEY='cafe_teri_v2_dict';
+let userDict={};
+try{userDict=JSON.parse(localStorage.getItem(DICT_KEY))||{}}catch(e){userDict={}}
+let DICT=Object.assign({},DICT_SEED,userDict);
+let __trMiss=new Set();
+
+// 1行の英訳。「A→B」は分割して個別に訳す。辞書に無ければ未翻訳として記録し日本語のまま返す
+function tr(x){
+  const t=(x||'').trim(); if(!t)return '';
+  if(DICT[t]!==undefined)return DICT[t];
+  if(t.indexOf('→')>=0){return t.split('→').map(v=>tr(v)).filter(v=>v).join(' → ');}
+  __trMiss.add(t); return t;
+}
+function trBlock(x){return (x||'').split('\n').map(tr).filter(v=>v!=='').join('\n')}
+
+// 利用者の追加翻訳を保存し、クラウドにも同期（メインと同じ相乗り方式）
+function saveDict(){
+  try{localStorage.setItem(DICT_KEY,JSON.stringify(userDict))}catch(e){}
+  DICT=Object.assign({},DICT_SEED,userDict);
+  const ts=Date.now();
+  let s=ls(KOB_KEY,[]).filter(r=>r&&r.id!=='__dict__');
+  s.push({id:'__dict__',ts:ts,dictData:userDict});
+  save(KOB_KEY,s);
+  pushToGAS(s.map(r=>({...r,zenImg:r.zenImg?'[image]':''})));
+}
+
+// 英語版お品書きを印刷
+function printOshEN(){
+  render();
+  const n=document.getElementById('note');
+  doPrint([buildOshHTML(getKob(),mains,n?n.value:'',true)]);
+}
+
+// 英語メニューカード：本日の内容で翻訳できない項目を洗い出して入力欄を出す
+function renderEnCard(){
+  const w=document.getElementById('en-missing'); if(!w)return;
+  // 翻訳入力中は作り直さない（入力が消えないように）
+  if(document.activeElement&&/^entr/.test(document.activeElement.id||''))return;
+  __trMiss=new Set();
+  const n=document.getElementById('note');
+  buildOshHTML(getKob(),mains,n?n.value:'',true); // 走査のみ（表示はしない）
+  const list=[...__trMiss];
+  if(!list.length){w.innerHTML='<div class="en-ok">✅ 本日の内容はすべて英語に変換できます</div>';return;}
+  window.__missList=list;
+  w.innerHTML='<div class="en-cap">🔤 未翻訳の項目（英語を入れて保存すると、次から自動で変換されます）</div>'
+    +list.map((t,i)=>'<div class="en-row"><div class="en-jp">'+esc(t)+'</div><input type="text" id="entr'+i+'" placeholder="English"><button class="btn-sm" onclick="addTr('+i+')">保存</button></div>').join('');
+}
+function addTr(i){
+  const inp=document.getElementById('entr'+i);
+  const en=(inp&&inp.value.trim())||'';
+  if(!en){toast('英語を入力してください');return;}
+  userDict[window.__missList[i]]=en;
+  saveDict();render();
+  toast('✅ 翻訳を保存しました');
+}
 function ls(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){alert('保存容量がいっぱいです。')}}
 
@@ -545,6 +697,13 @@ async function loadFromGAS(silent){
         save(MAIN_KEY,mains);
         mainsTs=mrec.ts;localStorage.setItem(MAIN_TS_KEY,mainsTs);
         buildMainEdit();render();
+      }
+      // 翻訳辞書の同期：双方の追加分を残してマージ（この端末の入力を優先）
+      const drec=merged.find(r=>r&&r.id==='__dict__');
+      if(drec&&drec.dictData){
+        userDict=Object.assign({},drec.dictData,userDict);
+        try{localStorage.setItem(DICT_KEY,JSON.stringify(userDict))}catch(e){}
+        DICT=Object.assign({},DICT_SEED,userDict);
       }
       // クラウドに無い記録がこの端末にあれば書き戻す（送信失敗で取り残された履歴の救済）
       const cloudIds=new Set(json.data.map(r=>r&&r.id));
@@ -809,18 +968,17 @@ function upd(d){
 //   kobArr   : 小鉢の配列（5要素想定／不足分は空マスで補完）
 //   mainsArr : メインの配列 [{id,name,desc}, ...]（名前が空のものは自動除外）
 //   note     : 備考の文字列
-function buildOshHTML(kobArr, mainsArr, note, lang){
-  const EN=(lang==='en');
-  const T_KOB=EN?"Today's Five Small Dishes":'日替わり小鉢の献立';
-  const T_PICK=EN?'Please choose one main dish':'お好きなメインをお選びください';
-  // 装飾SVG（印刷で確実に出るようインライン）
+function buildOshHTML(kobArr, mainsArr, note, en){
   const LEAF='<svg width="36" height="18" viewBox="0 0 36 18" xmlns="http://www.w3.org/2000/svg"><g stroke="#8a9667" stroke-width="1" stroke-linecap="round" fill="none"><path d="M3 9 H31"/></g><g fill="#9aa67a"><ellipse cx="10" cy="5" rx="4.2" ry="2" transform="rotate(-28 10 5)"/><ellipse cx="18" cy="4" rx="4.2" ry="2" transform="rotate(-28 18 4)"/><ellipse cx="26" cy="5" rx="4.2" ry="2" transform="rotate(-28 26 5)"/><ellipse cx="14" cy="13" rx="4.2" ry="2" transform="rotate(28 14 13)"/><ellipse cx="22" cy="14" rx="4.2" ry="2" transform="rotate(28 22 14)"/></g></svg>';
   const LEAFR='<span style="display:inline-flex;transform:scaleX(-1)">'+LEAF+'</span>';
   const FLOWER='<svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg"><g fill="#cbb273"><circle cx="11" cy="4" r="3"/><circle cx="17.6" cy="8.8" r="3"/><circle cx="15.1" cy="16.6" r="3"/><circle cx="6.9" cy="16.6" r="3"/><circle cx="4.4" cy="8.8" r="3"/></g><circle cx="11" cy="11" r="2.4" fill="#9aa67a"/></svg>';
 
+  const T=x=>en?tr(x):x;       // 1行を英訳（辞書）
+  const TB=x=>en?trBlock(x):x; // 複数行を英訳
+
   // 小鉢（丸番号カード・2列）／必ず5枠に正規化
   const kob5=[]; for(let i=0;i<5;i++) kob5.push((kobArr&&kobArr[i])||'');
-  const kl=kob5.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(v?esc(v).replace(/\n/g,'<br>'):'　　　　　　')+'</div></div>').join('');
+  const kl=kob5.map((v,i)=>'<div class="kl"><div class="kl-n">'+(i+1)+'</div><div class="kl-t">'+(v?esc(TB(v)).replace(/\n/g,'<br>'):'　　　　　　')+'</div></div>').join('');
 
   // メイン（料理名が入っているものだけ）
   const activeMains=(mainsArr||[]).filter(m=>m&&m.name&&m.name.trim()&&m.on!==false);
@@ -837,33 +995,39 @@ function buildOshHTML(kobArr, mainsArr, note, lang){
       const t=line.trim();
       const mt=t.match(/^【(.+?)】(.*)$/);
       if(mt){
-        const ctitle=esc(mt[1]); const citems=esc(mt[2].trim());
-        // 【…】のみの行は太字1行で、【タイトル】本文 の形式は2段で表示
+        const ctitle=esc(T(mt[1])); const citems=esc(T(mt[2].trim()));
         callout+='<div class="m-callout">'+(citems
           ?'<div class="c-ttl">'+ctitle+'</div><div class="c-items">'+citems+'</div>'
           :'<div class="c-items">'+ctitle+'</div>')+'</div>';
       }else if(t){
-        descLines.push(esc(t));
+        descLines.push(esc(T(t)));
       }
     });
     const desc=descLines.join('<br>');
     return '<div class="mln">'
       +'<div class="m-flower-l">'+FLOWER+'</div>'
-      +'<div class="m-body"><div class="m-nm">'+esc(m.name).replace(/\n/g,'<br>')+'</div><div class="m-ds">'+desc+'</div>'+callout+'</div>'
+      +'<div class="m-body"><div class="m-nm">'+esc(TB(m.name)).replace(/\n/g,'<br>')+'</div><div class="m-ds">'+desc+'</div>'+callout+'</div>'
       +'<div class="m-flower">'+FLOWER+'</div>'
       +'</div>';
   }).join('');
 
   const noteStr=(note||'').trim();
-  const noteH=noteStr?'<div class="note">― '+esc(noteStr)+' ―</div>':'';
+  const noteH=noteStr?'<div class="note">― '+esc(T(noteStr))+' ―</div>':'';
 
-  return '<div class="pg-osh wash"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
+  const ttl=en?'Today’s Small Dishes':'日替わり小鉢の献立';
+  const band=en?'Please choose your main dish':'お好きなメインをお選びください';
+  const enSet=en?'<div class="en-info">Kobachi Lunch ― Salad ・ Five Daily Small Dishes ・ Miso Soup ・ Rice</div>':'';
+  const enRice=en?'<div class="en-info" style="padding-top:2%">Rice size:  Small ・ Regular ・ Large +¥200 ・ Refill +¥200</div>':'';
+
+  return '<div class="pg-osh wash'+(en?' en':'')+'"><div class="tex"></div><div class="f1"></div><div class="f2"></div><div class="in">'
     +'<div class="body">'
-    +'<div class="osh-ttl"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt'+(EN?' t-en':'')+'">'+T_KOB+'</span>'+LEAFR+'</div>'
+    +'<div class="osh-ttl"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt">'+ttl+'</span>'+LEAFR+'</div>'
     +'<div class="osh-rule"><span class="dot"></span><span class="ln"></span><span class="dot"></span></div>'
+    +enSet
     +'<div class="kob-list">'+kl+'</div>'
-    +'<div class="sec-pick"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt'+(EN?' t-en':'')+'">'+T_PICK+'</span>'+LEAFR+'</div>'
+    +'<div class="sec-pick"><span style="display:inline-flex">'+LEAF+'</span><span class="t-txt">'+band+'</span>'+LEAFR+'</div>'
     +'<div class="ml">'+ml+'</div>'
+    +enRice
     +noteH
     +'</div></div></div>';
 }
@@ -943,6 +1107,7 @@ function render(){
   saveDraft(); // 入力のたびに下書きを自動保存（再読み込み対策）
   const b=document.getElementById('pv-osh');if(b){renderA4(b,oshPageHTML());fitOsh(b)}
   const c=document.getElementById('pv-man');if(c)c.innerHTML=manPages().map(p=>'<div class="a4"><div class="a4-fit" style="transform:scale('+(c.clientWidth/794)+')">'+p+'</div></div>').join('');
+  renderEnCard();
 }
 // 横幅が変わった時だけ再描画（iPhoneはスクロールだけで縦resizeが頻発し、クラッシュの原因になるため）
 window.__lastW=window.innerWidth;
@@ -976,8 +1141,9 @@ function saveRecord(){
   };
   if(!rec.date){alert('日付を入力してください');return}
   let s=ls(KOB_KEY,[]);
-  const pseudo=s.filter(r=>r&&r.id==='__mains__'); // メイン同期用レコードは保護
-  s=s.filter(r=>r&&r.id!=='__mains__');
+  const isPseudo=r=>r&&typeof r.id==='string'&&r.id.indexOf('__')===0;
+  const pseudo=s.filter(isPseudo); // 同期用の特殊レコード（メイン・辞書）は保護
+  s=s.filter(r=>!isPseudo(r));
   s.unshift(rec);
   s.forEach((r,i)=>{if(i>=5)r.zenImg=''});
   const trimmed=s.slice(0,90).concat(pseudo); // 90日分まで保持＋メイン同期レコード
@@ -989,7 +1155,7 @@ function saveRecord(){
 let histSearchQ='';
 let histExpanded={};
 function renderHist(){
-  const s=ls(KOB_KEY,[]).filter(r=>r&&r.id!=='__mains__');
+  const s=ls(KOB_KEY,[]).filter(r=>!(r&&typeof r.id==='string'&&r.id.indexOf('__')===0));
   const list=document.getElementById('hist-list');
   if(!s.length){
     list.innerHTML='<div class="hist-empty">まだ保存された献立がありません🌿<br>「本日の献立」タブで保存すると<br>ここに積み上がります</div>';
@@ -1211,64 +1377,6 @@ function doPrint(pages){
 }
 
 function printOshOnly(){render();doPrint([oshPageHTML()])}
-
-/* ═══ 🌐 英語版お品書き（AI翻訳はお惣菜レシピ帳のGASを共用・キーはGAS側） ═══ */
-const AI_URL='https://script.google.com/macros/s/AKfycbyJzQwMpxfb2PTApjCINyjyHMLUjPpEM4RADrINKXw8N8QVtDIzB1ZTKTCqLCm6ToZMKQ/exec';
-const EN_CACHE_KEY='cafe_teri_en_cache';
-let enData=null, enSrc=null;
-function enSource(){
-  syncMains();
-  const am=mains.filter(m=>m&&m.name&&m.name.trim()&&m.on!==false);
-  const noteEl=document.getElementById('note');
-  return {kob:getKob(), mains:am.map(m=>({name:m.name||'',desc:m.desc||''})), note:noteEl?noteEl.value.trim():''};
-}
-function openEnglish(){
-  enSrc=enSource();
-  const key=JSON.stringify(enSrc);
-  const cache=ls(EN_CACHE_KEY,null);
-  if(cache&&cache.key===key&&cache.data){enData=cache.data;showEnModal();return;}
-  translateEnglish(false);
-}
-async function translateEnglish(force){
-  enSrc=enSource();
-  const key=JSON.stringify(enSrc);
-  toast('🌐 英語に翻訳中…（10〜20秒）');
-  const sys='You translate a Japanese cafe lunch menu into natural, appetizing English for a printed menu. Reply with JSON only, no explanation: {"kob":["","","","",""],"mains":[{"name":"","desc":""}],"note":""}. Rules: keep exactly the same number and order of items as the input; an empty input stays an empty string; keep line breaks (\\n) inside desc; a desc line that starts with 【...】 must keep the 【 】 markers and translate the text inside and after them (e.g. 【Choose your sauce】① Scallop shio-koji ② Rich spicy miso ③ Seafood soy); use romanized Japanese dish names with a short English gloss when helpful (e.g. "Kinpira gobo (sweet-soy braised burdock)"); concise menu style; do not add or remove items; do not mention prices unless present.';
-  try{
-    const r=await fetch(AI_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'ai',system:sys,user:JSON.stringify(enSrc)})});
-    const j=await r.json(); if(!j.ok)throw new Error(j.error||'AI error');
-    const m=(j.text||'').match(/\{[\s\S]*\}/); if(!m)throw new Error('no JSON');
-    const d=JSON.parse(m[0]);
-    enData={kob:[0,1,2,3,4].map(i=>(d.kob&&d.kob[i])||''), mains:enSrc.mains.map((x,i)=>({name:(d.mains&&d.mains[i]&&d.mains[i].name)||x.name, desc:(d.mains&&d.mains[i]&&d.mains[i].desc)||''})), note:d.note||''};
-    save(EN_CACHE_KEY,{key:key,data:enData});
-    showEnModal();
-  }catch(e){toast('⚠️ 翻訳に失敗しました：'+e.message);}
-}
-function showEnModal(){
-  const b=document.getElementById('en-body');
-  let h='<div class="edit-sec"><div class="edit-sec-ttl">TODAY\'S FIVE SMALL DISHES</div>';
-  enData.kob.forEach((v,i)=>{h+='<div class="edit-kob-row"><div class="edit-kob-num">'+(i+1)+'</div><textarea class="edit-kob-input" id="en-k'+i+'" rows="1">'+esc(v)+'</textarea></div>';});
-  h+='</div><div class="edit-sec"><div class="edit-sec-ttl">MAIN DISHES</div>';
-  enData.mains.forEach((m,i)=>{h+='<div class="edit-main"><input type="text" id="en-mn'+i+'" value="'+esc(m.name)+'" placeholder="Dish name"><textarea id="en-md'+i+'" rows="2" placeholder="Description">'+esc(m.desc)+'</textarea></div>';});
-  h+='</div><div class="edit-sec"><div class="edit-sec-ttl">NOTE</div><div class="edit-row"><input type="text" id="en-note" value="'+esc(enData.note)+'"></div></div>';
-  b.innerHTML=h;
-  document.getElementById('en-overlay').classList.add('open');
-  b.querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});
-}
-function closeEnModal(){document.getElementById('en-overlay').classList.remove('open');}
-function collectEn(){
-  const kob=[0,1,2,3,4].map(i=>{const e=document.getElementById('en-k'+i);return e?e.value.trim():''});
-  const ms=enData.mains.map((m,i)=>({id:'',on:true,name:(document.getElementById('en-mn'+i)||{}).value||'',desc:(document.getElementById('en-md'+i)||{}).value||''}));
-  const note=(document.getElementById('en-note')||{}).value||'';
-  enData={kob:kob,mains:ms.map(x=>({name:x.name,desc:x.desc})),note:note};
-  save(EN_CACHE_KEY,{key:JSON.stringify(enSrc),data:enData});
-  return {kob:kob,mains:ms,note:note};
-}
-function printEnglish(){
-  const d=collectEn();
-  closeEnModal();
-  doPrint([buildOshHTML(d.kob,d.mains,d.note,'en')]);
-}
 function printMan(){render();doPrint(manPages())}
 
 /* ── 履歴データから印刷（写真ページ＋お品書きページ） ── */

@@ -385,11 +385,6 @@ body{font-family:var(--sans);color:var(--ink);background:#eae5dc;min-height:100v
     <div class="btn-bar">
       <button class="btn btn-gold" onclick="printOshOnly()">🖨 お品書きを印刷（毎日用）</button>
     </div>
-    <div class="card">
-      <div class="sec-lbl">🌐 英語メニュー（別紙・必要な時だけ）</div>
-      <div id="en-missing"></div>
-      <button class="btn btn-outline" style="width:100%" onclick="printOshEN()">🖨 英語版お品書きを印刷</button>
-    </div>
     <div class="btn-bar">
       <button class="btn btn-teal" onclick="saveRecord()">💾 この献立を保存</button>
     </div>
@@ -1107,7 +1102,6 @@ function render(){
   saveDraft(); // 入力のたびに下書きを自動保存（再読み込み対策）
   const b=document.getElementById('pv-osh');if(b){renderA4(b,oshPageHTML());fitOsh(b)}
   const c=document.getElementById('pv-man');if(c)c.innerHTML=manPages().map(p=>'<div class="a4"><div class="a4-fit" style="transform:scale('+(c.clientWidth/794)+')">'+p+'</div></div>').join('');
-  renderEnCard();
 }
 // 横幅が変わった時だけ再描画（iPhoneはスクロールだけで縦resizeが頻発し、クラッシュの原因になるため）
 window.__lastW=window.innerWidth;

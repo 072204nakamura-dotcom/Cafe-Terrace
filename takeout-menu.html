@@ -128,10 +128,14 @@
   .cal .c-head .en{font-family:'Cormorant Garamond',serif;font-style:italic;
                    font-size:15px;font-weight:600;letter-spacing:.1em;color:#8F7130;}
   .cal .c-head .ln{flex:1;border-top:1px solid var(--line);transform:translateY(-5px);}
+  .cal .months{display:grid;grid-template-columns:1fr;gap:18px;}
+  @media (min-width:620px){ .cal{max-width:860px;} .cal .months{grid-template-columns:1fr 1fr;gap:20px;} }
+  .cal .m-lbl{font-family:'Shippori Mincho',serif;font-weight:700;font-size:16px;
+              letter-spacing:.1em;color:var(--sage-deep);margin-bottom:7px;}
   .cal img{display:block;width:100%;height:auto;border:1px solid var(--line);
            border-radius:10px;background:#fff;}
   .cal .c-note{font-size:14px;font-weight:400;color:#4E4C45;
-               line-height:1.8;margin-top:12px;}
+               line-height:1.8;margin-top:14px;}
   .cal .c-note strong{font-weight:700;color:var(--sage-deep);}
 
   footer{background:var(--sage-deep);color:#DEDCD0;text-align:center;
@@ -166,10 +170,19 @@
 
 <main id="list"></main>
 
-<!-- ▼▼ 毎月ここを差し替える：画像ファイルと見出しの「9月」 ▼▼ -->
+<!-- ▼▼ 毎月ここを差し替える：月のラベルと画像ファイル名 ▼▼ -->
 <section class="cal">
-  <div class="c-head"><h2>10月の営業日</h2><span class="en">Calendar</span><span class="ln"></span></div>
-  <img src="calendar-2026-10.jpg" alt="2026年10月の営業日カレンダー。バツ印の日がお休みです。">
+  <div class="c-head"><h2>営業日カレンダー</h2><span class="en">Calendar</span><span class="ln"></span></div>
+  <div class="months">
+    <div>
+      <div class="m-lbl">10月</div>
+      <img src="calendar-2026-10.jpg" alt="2026年10月の営業日カレンダー。バツ印の日がお休みです。">
+    </div>
+    <div>
+      <div class="m-lbl">11月</div>
+      <img src="calendar-2026-11.jpg" alt="2026年11月の営業日カレンダー。バツ印の日がお休みです。">
+    </div>
+  </div>
   <p class="c-note"><strong>✕の日はお休み</strong>です。営業日は <strong>11:00〜15:30</strong>。<br>
      臨時のお休みは公式LINEでお知らせしています。</p>
 </section>

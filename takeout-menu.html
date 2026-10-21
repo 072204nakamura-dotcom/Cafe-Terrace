@@ -26,19 +26,18 @@
        color:var(--ink);line-height:1.7;
        padding-bottom:calc(env(safe-area-inset-bottom) + 84px);}
 
-  /* ===== 下部の電話バー ===== */
+  /* ===== 下部の固定バー（買い方の案内） ===== */
   .callbar{position:fixed;left:0;right:0;bottom:0;z-index:20;
            background:rgba(46,74,64,.97);
            padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
            display:flex;justify-content:center;
            box-shadow:0 -2px 12px rgba(0,0,0,.18);}
-  .callbar a{display:flex;align-items:center;justify-content:center;gap:10px;
+  .callbar .inner{display:flex;align-items:center;justify-content:center;gap:10px;
              width:100%;max-width:520px;
              background:#F4F1E8;color:var(--sage-deep);
-             text-decoration:none;border-radius:10px;
-             padding:15px 18px;font-size:18px;font-weight:700;
-             letter-spacing:.06em;}
-  .callbar .tel{font-size:16px;font-weight:500;letter-spacing:.02em;}
+             border-radius:10px;
+             padding:14px 18px;font-size:17px;font-weight:700;
+             letter-spacing:.04em;text-align:center;line-height:1.5;}
 
   /* ===== ヒーロー ===== */
   .hero{background:linear-gradient(168deg,var(--sage-deep) 0%,var(--sage) 100%);
@@ -84,8 +83,9 @@
                  font-size:14px;font-weight:600;color:var(--gold);white-space:nowrap;}
   .sec-title .ln{flex:1;border-top:1px dotted var(--line);}
 
-  .note{font-size:13px;font-weight:400;color:#5A574E;
-        margin:-2px 4px 14px;line-height:1.75;}
+  .note{font-size:14px;font-weight:400;color:#4E4C45;
+        margin:-2px 4px 14px;line-height:1.8;}
+  .note strong{font-weight:700;color:var(--sage-deep);}
 
   /* ピザカード */
   .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
@@ -176,7 +176,7 @@
 <!-- ▲▲ ここまで ▲▲ -->
 
 <div class="callbar">
-  <a href="tel:08029240984">お電話でのご注文 <span class="tel">080-2924-0984</span></a>
+  <div class="inner">テイクアウトのピザは、レジ前で販売しています。</div>
 </div>
 
 <footer>
